@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhraseCraft</title>
+    <style>
+       :root {
+    /* Cores de Fundo e Sombra */
+    --background-color: #e0f2f7; /* Um azul claro suave */
+    --shadow-color: rgba(0, 0, 0, 0.3);
+
+    /* Novos Degradês */
+    --blue-gradient-start: #007bff; /* Azul vibrante */
+    --blue-gradient-end: #0056b3;    /* Azul mais escuro */
+
+    --grey-gradient-start: #d0d0d0; /* Agora o 'escuro' (que era o fim) */
+    --grey-gradient-end: #e0e0e0;    /* Agora o 'claro' (que era o início) */
+
+    --red-gradient-start: #dc3545; /* Vermelho vibrante */
+    --red-gradient-end: #a71d2a;    /* Vermelho mais escuro */
+
+    --orange-gradient-start: #ffc107; /* Laranja vibrante */
+    --orange-gradient-end: #e0a800;    /* Laranja mais escuro */
+
+    /* Variáveis para o progresso do JavaScript (mantidas) */
+    --border-progress: 0; /* 0 a 100 - Controla o preenchimento pelo JS */
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: var(--background-color);
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 100%;
+    max-width: 800px;
+    box-sizing: border-box;
+}
+
+h1 {
+    color: #007bff; /* Azul vibrante */
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.placares {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 30px;
+    gap: 15px; /* Define um espaçamento de 15px entre os itens flexíveis */
+}
+
+.player-score-card {
+    background-color: #f0f0f0;  
+    /* Definindo largura e altura fixas para ser quadrado */
+    width: 150px; 
+    height: 150px; 
+    flex-shrink: 0; /* Impede que encolha em um flex container */
+    
+    display: flex; /* Usar flexbox para centralizar o .player-content */
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden; 
+}
+
+.player-content {
+    background-color: #ffffff; /* Fundo branco para a div interna */
+    /* Ajustado para ser uma porcentagem do pai para manter a "borda" proporcional */
+    width: 90%; 
+    height: 90%; 
+    
+    display: flex; /* Para centralizar o texto dentro do player-content */
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; 
+    z-index: 3; 
+}
+
+.player-score-card h2 {
+    margin-top: 0;
+    /* Diminua esta margem para aproximar do placar */
+    margin-bottom: 5px; /* Era 0, aumentei para dar um pequeno espaço */
+    color: #555;
+    font-size: 1.5em;
+}
+
+.player-score-card .score {
+    /* Diminua esta margem para aproximar do título */
+    margin-top: 0px; /* Adicionado para remover o espaço padrão ou excessivo */
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #28a745; /* Verde para pontuação */
+    margin-bottom: 5px; /* Mantido ou ajustado conforme necessário */
+}
+
+/* Estilo para a borda do cronômetro quando ativo */
+.player-score-card.player-active {
+    background: linear-gradient(-135deg, var(--blue-gradient-start), var(--blue-gradient-end));
+    /* Removido o padding aqui, pois o width/height fixos já determinam o tamanho total */
+    position: relative;
+    z-index: 1; 
+    transition: background 0.7s ease-in-out;
+}
+
+/* O pseudo-elemento :before irá criar a área "vazia" da borda
+   e usar um conic-gradient para desenhar o preenchimento cinza por cima,
+   revelando o gradiente do pai onde for transparente. */
+.player-score-card.player-active::before {
+    content: '';
+    position: absolute;
+    /* Alterado de 4px para 0px para cobrir todo o card e remover a "borda fina" */
+    top: 0px; 
+    left: 0px; 
+    right: 0px; 
+    bottom: 0px; 
+    z-index: 2; /* Acima do fundo do cartão, mas abaixo do conteúdo */
+    border-radius: 8px;
+    
+    /* O conic-gradient desenha o cinza até o progresso, o resto é transparente */
+    background: conic-gradient(
+        var(--grey-gradient-start) calc(var(--border-progress) * 3.6deg),
+        transparent calc(var(--border-progress) * 3.6deg)
+    );
+    
+    transition: background 0.1s linear; /* Transição suave para o preenchimento */
+}
+
+/* Animação de piscar para o tempo acabando */
+@keyframes blink-timer {
+    0%, 100% {
+        /* Muda o background do player-score-card para o vermelho */
+        background: linear-gradient(-135deg, var(--red-gradient-start), var(--red-gradient-end));
+    }
+    50% {
+        /* Muda o background do player-score-card para o laranja */
+        background: linear-gradient(-135deg, var(--orange-gradient-start), var(--orange-gradient-end));
+    }
+}
+
+.player-score-card.player-active.time-almost-up {
+    animation: blink-timer 1s infinite alternate; /* Aplica a animação no fundo do card */
+}
+
+.word-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    min-height: 80px; /* Garante espaço mesmo sem cards */
+}
+
+.word-card {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.4em;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    user-select: none; /* Impede seleção de texto */
+}
+
+.word-card:hover:not(.disabled) {
+    transform: translateY(-3px) scale(1.02);
+    background-color: #0056b3;
+}
+
+.word-card.disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+    box-shadow: none;
+}
+
+/* Animação para card errado (tremer) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.word-card.error {
+    animation: shake 0.4s ease-in-out;
+    background-color: #dc3545; /* Vermelho */
+}
+
+.mounted-phrase-container {
+    background-color: #f8f9fa;
+    border: 2px dashed #007bff;
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 60px; /* Garante que o espaço não encolha */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: #343a40;
+    margin-bottom: 30px;
+    text-transform: capitalize; /* Capitaliza a primeira letra */
+}
+
+.mounted-word {
+    padding: 5px 10px;
+    border-bottom: 2px solid #ccc; /* Linha para o underscore */
+    min-width: 50px; /* Largura mínima para o underscore */
+    text-align: center;
+}
+
+/* Estilo para os underscores */
+.mounted-word.placeholder {
+    color: #ccc;
+}
+
+.message {
+    margin-top: 20px;
+    font-size: 1.3em;
+    font-weight: bold;
+    min-height: 1.5em; /* Garante espaço */
+    color: #555;
+}
+
+.message.success {
+    color: #28a745; /* Verde para sucesso */
+}
+
+.message.error {
+    color: #dc3545; /* Vermelho para erro */
+}
+
+.message.info {
+    color: #007bff; /* Azul para informação */
+}
+
+button {
+    padding: 12px 25px;
+    font-size: 1.2em;
+    background-color: #6c757d; /* Cinza para o botão */
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
+}
+
+button:hover:not(:disabled) {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+
+button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Responsividade básica */
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2em;
+    }
+    .placares {
+        flex-wrap: wrap; /* Permite que os placares quebrem linha */
+    }
+    .player-score-card {
+        width: 120px; /* Reduz o tamanho em telas menores */
+        height: 120px;
+    }
+    .player-content {
+        width: 80%; /* Mantém a proporção */
+        height: 80%;
+    }
+    .player-score-card h2 {
+        font-size: 1.2em;
+    }
+    .player-score-card .score {
+        font-size: 2em;
+    }
+    .word-card {
+        padding: 8px 15px;
+        font-size: 1.2em;
+    }
+    .mounted-phrase-container {
+        font-size: 1.5em;
+        padding: 15px;
+    }
+    button {
+        font-size: 1.1em;
+        padding: 10px 20px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>PhraseCraft</h1>
+
+        <div class="placares">
+            <div id="player1ScoreCard" class="player-score-card player-active">
+                <div class="player-content">
+                    <h2>Jogador 1</h2>
+                    <p class="score" id="scorePlayer1">0</p>
+                </div>
+            </div>
+
+            <div id="player2ScoreCard" class="player-score-card">
+                <div class="player-content">
+                    <h2>Jogador 2</h2>
+                    <p class="score" id="scorePlayer2">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="word-cards-container" id="wordCardsContainer"></div>
+
+        <div class="mounted-phrase-container" id="mountedPhraseContainer"></div>
+
+        <p class="message" id="gameMessage"></p>
+
+        <button id="newGameButton">Novo Jogo</button>
+    </div>
+
+    <script>
+        // --- Dados do Jogo ---
+        const frasesDoJogo = [            
+        "O cachorro comeu a casa",            
+        "O sol brilha no céu azul",            
+        "A água é essencial para a vida",            
+        "Gatos são animais muito fofos",            
+        "Programar é divertido e desafiador"        
+        ];
+
+        const TEMPO_POR_TURNO_SEGUNDOS = 10; // 10 segundos por turno
+        const INTERVALO_ATUALIZACAO_MS = 100; // Atualiza o cronômetro a cada 100 milissegundos (0.1s)
+        const PORCENTAGEM_ALERTA_TEMPO = 30; // % do tempo restante para começar a piscar (e.g., 30% de 10s = 3s)
+
+
+        let estadoDoJogo = {
+            turnoAtual: 1,
+            jogadorAtual: 1, // 1 ou 2
+            pontuacaoJogador1: 0,
+            pontuacaoJogador2: 0,
+            fraseCorreta: "", // Ex: "O cachorro comeu a casa"
+            palavrasCorretasArray: [], // Ex: ["o", "cachorro", "comeu", "a", "casa"]
+            palavrasEmbaralhadasParaCards: [], // Ex: [{word: "cachorro", originalIndex: 1, clicked: false}]
+            palavrasAcertadas: [], // Ex: ["___", "cachorro", "___", "___", "___"]
+            historicoJogadas: [],
+            jogoAtivo: false,
+            timerInterval: null, // Para controlar o setInterval do timer
+            tempoRestante: TEMPO_POR_TURNO_SEGUNDOS
+        };
+
+        // --- Elementos HTML ---
+        const player1ScoreCard = document.getElementById('player1ScoreCard');
+        const player2ScoreCard = document.getElementById('player2ScoreCard');    
+        const scorePlayer1Display = document.getElementById('scorePlayer1');
+        const scorePlayer2Display = document.getElementById('scorePlayer2');
+        const wordCardsContainer = document.getElementById('wordCardsContainer');
+        const mountedPhraseContainer = document.getElementById('mountedPhraseContainer');
+        const gameMessageDisplay = document.getElementById('gameMessage');
+        const newGameButton = document.getElementById('newGameButton');
+
+        // --- Funções Auxiliares ---
+
+        /**
+         * Embaralha um array (algoritmo Fisher-Yates).
+         * @param {Array} array - O array a ser embaralhado.
+         * @returns {Array} - O array embaralhado.
+         */
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        /**
+         * Atualiza o estilo da borda do cronômetro com base no tempo restante.
+         */
+        function atualizarBordaCronometro() {
+            // Calcula o progresso esgotado (de 0 a 100%)
+            // Este valor é o que controla o preenchimento do conic-gradient no CSS
+            const progressoParaPreenchimento = (1 - (estadoDoJogo.tempoRestante / TEMPO_POR_TURNO_SEGUNDOS)) * 100;
+            const playerCard = estadoDoJogo.jogadorAtual === 1 ? player1ScoreCard : player2ScoreCard;
+
+            // Define a variável CSS para o progresso da borda
+            playerCard.style.setProperty('--border-progress', progressoParaPreenchimento);
+
+            // Lógica para adicionar/remover a classe que controla a animação de piscar (red/orange)
+            if ((estadoDoJogo.tempoRestante / TEMPO_POR_TURNO_SEGUNDOS) * 100 <= PORCENTAGEM_ALERTA_TEMPO && estadoDoJogo.tempoRestante > 0) {
+                playerCard.classList.add('time-almost-up');
+            } else {
+                playerCard.classList.remove('time-almost-up');
+                // Garante que o gradiente base volte ao azul quando não estiver piscando
+                playerCard.style.background = 'linear-gradient(-135deg, var(--blue-gradient-start), var(--blue-gradient-end))';
+            }
+        }
+
+        /**
+         * Inicia ou reinicia o cronômetro do turno.
+         */
+        function iniciarCronometro() {
+            clearInterval(estadoDoJogo.timerInterval); // Limpa qualquer cronômetro anterior
+            estadoDoJogo.tempoRestante = TEMPO_POR_TURNO_SEGUNDOS;
+            atualizarBordaCronometro(); // Atualiza a borda imediatamente
+
+            estadoDoJogo.timerInterval = setInterval(() => {
+                estadoDoJogo.tempoRestante -= (INTERVALO_ATUALIZACAO_MS / 1000); // Reduz o tempo em frações de segundo
+
+                if (estadoDoJogo.tempoRestante < 0) { // Garante que não vá abaixo de zero
+                    estadoDoJogo.tempoRestante = 0;
+                }
+
+                atualizarBordaCronometro();
+
+                if (estadoDoJogo.tempoRestante <= 0) {
+                    clearInterval(estadoDoJogo.timerInterval);
+                    lidarComTempoEsgotado();
+                }
+            }, INTERVALO_ATUALIZACAO_MS); // Atualiza a cada 100 milissegundos
+        }
+
+        /**
+         * Lida com a situação quando o tempo de um jogador se esgota.
+         */
+        function lidarComTempoEsgotado() {
+            gameMessageDisplay.textContent = `Tempo esgotado para o Jogador ${estadoDoJogo.jogadorAtual}!`;
+            gameMessageDisplay.className = "message error";
+
+            // O oponente ganha um ponto por tempo esgotado do outro
+            if (estadoDoJogo.jogadorAtual === 1) {
+                estadoDoJogo.pontuacaoJogador2++;
+            } else {
+                estadoDoJogo.pontuacaoJogador1++;
+            }
+            atualizarPlacares(); // Atualiza a pontuação na interface
+
+            passarTurno();
+        }
+
+        /**
+         * Passa o turno para o próximo jogador.
+         */
+        function passarTurno() {
+            estadoDoJogo.turnoAtual++;
+            estadoDoJogo.jogadorAtual = estadoDoJogo.jogadorAtual === 1 ? 2 : 1;
+
+            // Remove a classe 'player-active' do jogador anterior
+            player1ScoreCard.classList.remove('player-active', 'time-almost-up');
+            player2ScoreCard.classList.remove('player-active', 'time-almost-up');
+            // Garante que os fundos voltem ao azul padrão
+            player1ScoreCard.style.background = 'linear-gradient(-135deg, var(--blue-gradient-start), var(--blue-gradient-end))';
+            player2ScoreCard.style.background = 'linear-gradient(-135deg, var(--blue-gradient-start), var(--blue-gradient-end))';
+
+            // Adiciona a classe 'player-active' ao jogador atual
+            if (estadoDoJogo.jogadorAtual === 1) {
+                player1ScoreCard.classList.add('player-active');
+            } else {
+                player2ScoreCard.classList.add('player-active');
+            }
+
+            // Reinicia o cronômetro para o novo turno
+            if (estadoDoJogo.jogoAtivo) {
+                iniciarCronometro();
+            }
+        }
+
+        /**
+         * Atualiza os placares dos jogadores na interface.
+         */
+        function atualizarPlacares() {
+            scorePlayer1Display.textContent = estadoDoJogo.pontuacaoJogador1;
+            scorePlayer2Display.textContent = estadoDoJogo.pontuacaoJogador2;
+        }
+
+        /**
+         * Renderiza os cards de palavras embaralhadas no container.
+         */
+        function renderizarCardsDePalavras() {
+            wordCardsContainer.innerHTML = ''; // Limpa cards existentes
+            estadoDoJogo.palavrasEmbaralhadasParaCards.forEach((wordObj, index) => {
+                const card = document.createElement('div');
+                card.classList.add('word-card');
+                card.textContent = wordObj.word;
+                card.dataset.index = index; // Guarda o índice no array embaralhado
+
+                if (wordObj.clicked) { // Se já foi clicado (e "usado")
+                    card.classList.add('disabled');
+                } else {
+                    card.addEventListener('click', handleCardClick);
+                }
+                wordCardsContainer.appendChild(card);
+            });
+        }
+
+        /**
+         * Renderiza a frase sendo montada (com underscores e palavras acertadas).
+         */
+        function renderizarFraseSendoMontada() {
+            mountedPhraseContainer.innerHTML = ''; // Limpa a frase existente
+            estadoDoJogo.palavrasAcertadas.forEach(word => {
+                const span = document.createElement('span');
+                span.classList.add('mounted-word');
+                if (word === '___') {
+                    span.classList.add('placeholder');
+                    span.textContent = '___';
+                } else {
+                    span.textContent = word;
+                }
+                mountedPhraseContainer.appendChild(span);
+            });
+        }
+
+        /**
+         * Lida com o clique em um card de palavra.
+         * @param {Event} event - O evento de clique.
+         */
+        function handleCardClick(event) {
+            if (!estadoDoJogo.jogoAtivo) return; // Não permite cliques se o jogo não estiver ativo
+
+            const clickedCard = event.target;
+            const clickedWord = clickedCard.textContent.toLowerCase();
+            const clickedCardIndex = parseInt(clickedCard.dataset.index);
+
+            // Se o card já está desabilitado, ignora o clique
+            if (clickedCard.classList.contains('disabled')) return;
+
+            // Encontra a próxima posição na frase correta que precisa ser preenchida
+            const proximaPosicaoVazia = estadoDoJogo.palavrasAcertadas.findIndex(word => word === '___');
+
+            // Se não há mais posições vazias, a frase já está completa (caso de bug ou clique após vitória)
+            if (proximaPosicaoVazia === -1) {
+                gameMessageDisplay.textContent = "A frase já está completa! Inicie um novo jogo.";
+                gameMessageDisplay.className = "message info";
+                return;
+            }
+
+            const palavraEsperada = estadoDoJogo.palavrasCorretasArray[proximaPosicaoVazia];
+
+            let acertou = false;
+            let mensagem = "";
+
+            if (clickedWord === palavraEsperada) {
+                // Remove a palavra clicada da lista de cards disponíveis (marcamos como clicada)
+                estadoDoJogo.palavrasEmbaralhadasParaCards[clickedCardIndex].clicked = true;
+
+                // Preenche a palavra na posição correta da frase
+                estadoDoJogo.palavrasAcertadas[proximaPosicaoVazia] = estadoDoJogo.palavrasCorretasArray[proximaPosicaoVazia];
+
+                acertou = true;
+                mensagem = `Jogador ${estadoDoJogo.jogadorAtual} acertou a palavra "${clickedWord}"!`;
+                gameMessageDisplay.className = "message success";
+
+                // Adiciona ponto ao jogador que acertou
+                if (estadoDoJogo.jogadorAtual === 1) {
+                    estadoDoJogo.pontuacaoJogador1++;
+                } else {
+                    estadoDoJogo.pontuacaoJogador2++;
+                }
+            } else {
+                mensagem = `Jogador ${estadoDoJogo.jogadorAtual} errou. "${clickedWord}" não é a próxima palavra.`;
+                gameMessageDisplay.className = "message error";
+
+                // Adiciona feedback visual de "tremor" e impede cliques repetidos imediatos
+                clickedCard.classList.add('error');
+                setTimeout(() => {
+                    clickedCard.classList.remove('error');
+                }, 400); // Remove a classe após a animação
+
+                // O oponente ganha um ponto por erro
+                if (estadoDoJogo.jogadorAtual === 1) {
+                    estadoDoJogo.pontuacaoJogador2++;
+                } else {
+                    estadoDoJogo.pontuacaoJogador1++;
+                }
+            }
+
+            // Adicionar jogada ao histórico (opcional para debug ou log futuro)
+            estadoDoJogo.historicoJogadas.push({
+                turno: estadoDoJogo.turnoAtual,
+                jogador: estadoDoJogo.jogadorAtual,
+                palavraClicada: clickedWord,
+                acertou: acertou,
+                fraseParcial: estadoDoJogo.palavrasAcertadas.join(' ')
+            });
+
+            atualizarPlacares();
+            renderizarCardsDePalavras(); // Re-renderiza para desativar o card clicado
+            renderizarFraseSendoMontada();
+
+            // Verifica se a frase inteira foi acertada
+            const fraseMontadaCompleta = estadoDoJogo.palavrasAcertadas.join(' ');
+            const fraseCorretaCompleta = estadoDoJogo.palavrasCorretasArray.join(' ');
+
+            if (fraseMontadaCompleta === fraseCorretaCompleta) {
+                clearInterval(estadoDoJogo.timerInterval); // Para o cronômetro
+                estadoDoJogo.jogoAtivo = false;
+                gameMessageDisplay.innerHTML = `Jogador ${estadoDoJogo.jogadorAtual}<p><span style="font-size: 1.3em; font-weight: bold; color: inherit;">VENCEU!</span></p>`;
+                gameMessageDisplay.className = "message success";
+                desativarInteracao(); // Desativa cards e botões
+                // Remove a classe 'player-active' do jogador final para parar a borda
+                player1ScoreCard.classList.remove('player-active', 'time-almost-up');
+                player2ScoreCard.classList.remove('player-active', 'time-almost-up');
+                // Garante que os fundos voltem ao cinza padrão para o estado inativo
+                player1ScoreCard.style.background = '#f0f0f0';
+                player2ScoreCard.style.background = '#f0f0f0';
+                return;
+            }
+
+            // Passa o turno se o jogo ainda estiver ativo
+            passarTurno();
+            // REMOVIDA A MENSAGEM "Agora é a vez do Jogador X"
+            gameMessageDisplay.textContent = mensagem; // A mensagem agora só informa o acerto/erro
+            if (acertou) {
+                gameMessageDisplay.className = "message success";
+            } else {
+                gameMessageDisplay.className = "message error";
+            }
+        }
+
+        /**
+         * Desativa a interação com os cards quando o jogo não está ativo.
+         */
+        function desativarInteracao() {
+            document.querySelectorAll('.word-card').forEach(card => {
+                card.classList.add('disabled');
+                card.removeEventListener('click', handleCardClick);
+            });
+        }
+
+        /**
+         * Inicializa um novo jogo.
+         */
+        function iniciarNovoJogo() {
+            clearInterval(estadoDoJogo.timerInterval); // Garante que nenhum timer antigo esteja rodando
+
+            const fraseAleatoria = frasesDoJogo[Math.floor(Math.random() * frasesDoJogo.length)];
+
+            estadoDoJogo.fraseCorreta = fraseAleatoria;
+            estadoDoJogo.palavrasCorretasArray = fraseAleatoria.toLowerCase().split(' ');
+
+            // Cria objetos para as palavras embaralhadas, mantendo o originalIndex
+            estadoDoJogo.palavrasEmbaralhadasParaCards = shuffleArray(
+                estadoDoJogo.palavrasCorretasArray.map((word, index) => ({ word: word, originalIndex: index, clicked: false }))
+            );
+
+            estadoDoJogo.palavrasAcertadas = new Array(estadoDoJogo.palavrasCorretasArray.length).fill('___');
+            estadoDoJogo.turnoAtual = 1;
+            estadoDoJogo.jogadorAtual = 1;
+            estadoDoJogo.pontuacaoJogador1 = 0;
+            estadoDoJogo.pontuacaoJogador2 = 0;
+            estadoDoJogo.historicoJogadas = [];
+            estadoDoJogo.jogoAtivo = true;
+
+            atualizarPlacares();
+            renderizarCardsDePalavras();
+            renderizarFraseSendoMontada();
+            gameMessageDisplay.textContent = `Jogo iniciado! Jogador ${estadoDoJogo.jogadorAtual}, sua vez.`;
+            gameMessageDisplay.className = "message info";
+
+            // Garante que o jogador 1 comece ativo no placar
+            player1ScoreCard.classList.add('player-active');
+            player2ScoreCard.classList.remove('player-active');
+            player1ScoreCard.classList.remove('time-almost-up');    
+            player2ScoreCard.classList.remove('time-almost-up');
+            
+            // Define o background de ambos os cards para o estado inicial
+            player1ScoreCard.style.background = 'linear-gradient(-135deg, var(--blue-gradient-start), var(--blue-gradient-end))';
+            player2ScoreCard.style.background = '#f0f0f0'; // Cor padrão para inativo
+
+            iniciarCronometro(); // Inicia o cronômetro para o primeiro turno
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', iniciarNovoJogo);
+        newGameButton.addEventListener('click', iniciarNovoJogo);
+    </script>
+</body>
+</html>

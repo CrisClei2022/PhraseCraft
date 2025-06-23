@@ -4,22 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Phrasecraft</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 	
     <style>
-        body {
-        }
+	body {
+		font-family: 'Orbitron', sans-serif;
+		color: #00ccff;
+		text-shadow: 0 0 5px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.6);
+		letter-spacing: 1.5px;
+		display: flex;
+		justify-content: column;
+		align-items: center;
+		padding-top: 2vh;
+		background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
+  		height: 100vh; /* Define a altura do body como 100% da altura da viewport */
+  		width: 100vw; /* Define a largura do body como 100% da altura da viewport */
+  		margin: 0; /* Remove a margem padrão do body */
+		flex-direction: column;
+    }
         
-        .main-container {
-        }        
+    #particle-container {
+	    position: fixed;
+	    top: 0;
+	    left: 0;
+	    width: 100vw;
+	    height: 100vh;
+	    overflow: hidden;
+	    pointer-events: none;
+	    z-index: -1;
+	}
+	.particle {
+	    position: absolute;
+	    background: rgba(255, 255, 255, 0.3);
+	    border-radius: 50%;
+	    animation: floatAndFade 15s infinite ease-in-out;
+	    pointer-events: none;
+	    z-index: 0;
+	}
+	
+	@keyframes floatAndFade {
+	    0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.5; }
+	    50% { transform: translateY(-50vh) translateX(50vw) scale(1.2); opacity: 0.2; }
+	    100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.5; }
+	}
         
-        .players-container {
-        }
+	.main-container {
+		color: #00ccff;
+		text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
+		background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+		background-color: #171627;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+		border: 3px solid rgba(255, 255, 255, 0.2);
+		padding: 40px;
+		padding-top: 5px;
+		border-radius: 12px;
+		text-align: center;
+		width: 90%;
+		max-width: 600px;
+		max-height: 90%;
+		margin-bottom: 20px;
+		animation: fadeInScale 1s ease-out;
+	}
         
-        .player1-container {
-        }
+	.players-container {
+  		display: flex;
+  		justify-content: space-around; /* ou space-between, dependendo do que você precisa */
+  		align-items: center;
+  		gap: 20px; /* Define a distância entre os elementos */
+		color: #00ccff;
+		text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
+		background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+		background-color: #171627;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+		border: 3px solid rgba(255, 255, 255, 0.2);
+		padding: 40px;
+		padding-top: 5px;
+		border-radius: 12px;
+		text-align: center;
+		width: 90%;
+		max-width: 550px;
+		max-height: 90%;
+		margin-bottom: 20px;    
+	}
         
-        .player2-container {
-        }
+	.player1-container, .player2-container {
+  		flex-basis: 45%;
+		color: #00ccff;
+		text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
+		background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+		background-color: #171627;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+		border: 3px solid rgba(255, 255, 255, 0.2);
+		padding: 40px;
+		padding-top: 5px;
+		border-radius: 12px;
+		text-align: center;
+		width: 45%;
+		max-width: 220px;
+		max-height: 45%;
+		margin-bottom: px;   
+	}
+    
         
     </style>
 </head>

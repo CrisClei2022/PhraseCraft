@@ -1,33 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phrasecraft</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-	
-    <style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Página de Preenchimento</title>
+  <style>
 	body {
-        font-family: 'Orbitron', sans-serif;
-        color: #00ccff;
-        text-shadow: 0 0 5px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.6);
-        letter-spacing: 1.5px;
-        display: flex;
-        /* Alinha os itens ao início do eixo principal (topo, pois flex-direction é column) */
-        justify-content: flex-start;
-        /* Continua centralizando horizontalmente */
-        align-items: center;
-        /* Ajuste este padding para controlar o espaço do topo */
-        padding-top: 1.5vh; /* Aumentado para dar mais espaço do topo */
-        background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
-        height: 100vh;
-        width: 100vw;
-        margin: 0;
-        flex-direction: column;
+		font-family: 'Orbitron', sans-serif;
+		color: #00ccff;
+		text-shadow: 0 0 5px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.6);
+		letter-spacing: 1.5px;
+		display: flex;
+		justify-content: column;
+		align-items: center;
+		padding-top: 2vh;
+		background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
+  		height: 100vh; /* Define a altura do body como 100% da altura da viewport */
+  		width: 100vw; /* Define a largura do body como 100% da altura da viewport */
+  		margin: 0; /* Remove a margem padrão do body */
+		flex-direction: column;
     }
-	
-	#particle-container {
+        
+    #particle-container {
 	    position: fixed;
 	    top: 0;
 	    left: 0;
@@ -37,7 +31,6 @@
 	    pointer-events: none;
 	    z-index: -1;
 	}
-	
 	.particle {
 	    position: absolute;
 	    background: rgba(255, 255, 255, 0.3);
@@ -52,113 +45,88 @@
 	    50% { transform: translateY(-50vh) translateX(50vw) scale(1.2); opacity: 0.2; }
 	    100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.5; }
 	}
-	
+    
 	.main-container {
-	    color: #00ccff;
-	    text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
-	    background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
-	    background-color: #171627;
-	    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
-	    border: 3px solid rgba(255, 255, 255, 0.2);
-	    padding: 40px;
-	    padding-top: 5px;
-	    border-radius: 12px;
-	    text-align: center;
-	    width: 90%;
-	    max-width: 600px;
-	    max-height: 90%;
-	    margin-bottom: 20px;
-	    animation: fadeInScale 1s ease-out;
-	    /* Adiciona um z-index para controle de empilhamento */
-	    position: relative; /* Necessário para z-index */
-	    z-index: 1; /* Estará abaixo dos players se eles tiverem z-index maior */
+		color: #00ccff;
+		text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
+		background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+		background-color: #171627;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+		border: 3px solid rgba(255, 255, 255, 0.2);
+		padding: 40px;
+		padding-top: 5px;
+		border-radius: 12px;
+		text-align: center;
+		width: 90%;
+		max-width: 600px;
+		max-height: 90%;
+		margin-bottom: 20px;
+		animation: fadeInScale 1s ease-out;
+	    z-index: 1;
 	}
 	
 	.players-container {
-	    display: flex;
-	    justify-content: space-around;
-	    align-items: center;
-	    gap: 20px;
-	    color: #00ccff;
-	    text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
-	    background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
-	    background-color: #171627;
-	    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
-	    border: 3px solid rgba(255, 255, 255, 0.2);
-	    padding: 40px;
-	    padding-top: 5px;
-	    border-radius: 12px;
-	    text-align: center;
-	    width: 90%;
-	    max-width: 550px;
-	    max-height: 90%;
-	    /* Correção: remova 'px' solto aqui se for um erro de digitação */
-	    /* margin-bottom: px; */
-	    margin-bottom: 0px; /* Ou um valor válido */
+  		display: flex;
+  		justify-content: space-around; /* ou space-between, dependendo do que você precisa */
+  		align-items: center;
+  		gap: 20px; /* Define a distância entre os elementos */
+		color: #00ccff;
+		text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
+		background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+		background-color: #171627;
+		box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+		border: 3px solid rgba(255, 255, 255, 0.2);
+		padding: 40px;
+		padding-top: 5px;
+		border-radius: 12px;
+		text-align: center;
+		width: 90%;
+		max-width: 550px;
+		max-height: 90%;
+		margin-bottom: px; 
 	    position: relative; /* Necessário para z-index */
-	    z-index: 1; /* Estará abaixo dos players individuais */
+	    z-index: 2; /* Estará abaixo dos players individuais */
 	}
-	
+    
 	.player1-container, .player2-container {
-	    position: relative;
-	    border: 3px solid transparent;
-	    border-radius: 12px;
-	    background-clip: padding-box;
-	    aspect-ratio: 2/1;
-	    color: #00ccff;
-	    text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
-	    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
-	    padding: 10px;
-	    padding-top: 5px;
-	    text-align: center;
-	    width: 90px;
-	    max-width: 18%;
-	    max-height: 45px;
-	    margin-bottom: 20px;
-	    
-	    /* Chave para que eles e seus ::before apareçam na frente */
-	    z-index: 2; /* Maior que main-container e players-container */
-	}
+      width: 200px;
+      height: 200px;
+      border: 10px solid transparent;
+      border-radius: 15%;
+      background: #fff;
+      background-clip: padding-box;
+      position: relative;
+    }
 	
 	.player1-container::before, .player2-container::before {
-	    content: '';
-	    position: absolute;
-	    /* Ajuste para um tamanho maior, visível como um halo */
-	    top: -15px; /* Exemplo: move 15px para cima */
-	    left: -15px; /* Exemplo: move 15px para a esquerda */
-	    width: calc(100% + 30px); /* Exemplo: 100% + (15px de cada lado) = +30px */
-	    height: calc(100% + 30px); /* Exemplo: 100% + (15px de cada lado) = +30px */
-	    
-	    background-image:
-	        conic-gradient(from 0deg, #ff69b4, #ffe68b, #8bc34a, #03a9f4, #ff69b4),
-	        linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
-	    background-size:
-	        400% 400%,
-	        100% 100%;
-	    background-position:
-	        0% 0%,
-	        0% 0%;
-	    animation: animate 10s linear infinite;
-	    border-radius: 12px;
-	    z-index: 0; /* Ou 'auto' - isso o coloca abaixo do conteúdo (.player1-content) */
-	}
-	
-	@keyframes animate {
-	    0% {
-	        background-position: 0% 0%, 0% 0%;
-	    }
-	    100% {
-	        background-position: 100% 100%, 0% 0%;
-	    }
-	}
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      width: calc(100% + 20px);
+      height: calc(100% + 20px);
+      background-image: conic-gradient(from 0deg, #8bc34a, #ffe68b, #ff69b4, #ffe68b, #8bc34a, #03a9f4, #ff69b4);
+      background-size: 400% 400%;
+      animation: animate 10s linear infinite;
+      border-radius: 15%;
+      z-index: -1;
+    }
+
+    @keyframes animate {
+      0% {
+        background-position: 0% 0%;
+      }
+      100% {
+        background-position: 100% 100%;
+      }
+    }
 	
 	.player1-content, .player2-content {
 	    position: relative;
-	    z-index: 1; /* Garante que o texto 'Player 1' esteja acima do ::before */
+	    z-index: 4; /* Garante que o texto 'Player 1' esteja acima do ::before */
 	}
-    </style>
+  </style>
 </head>
-
 <body>
 <div class="main-container">
 
@@ -179,10 +147,5 @@
 	</div>
 
 </div>
-
-<script>
-    
-</script>
-
 </body>
 </html>

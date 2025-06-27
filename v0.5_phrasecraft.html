@@ -37,26 +37,54 @@ body {
     /* Change this line */
     align-items: flex-start;
 	background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
-    gap: 10px;
     margin: 0;
-	padding-top: 10px;
+	padding-top: 1.2%;
 	font-family: 'Orbitron', sans-serif;
 	color: #00ccff;
 	text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
 	letter-spacing: 1.5px;
     overflow: hidden;
 }
-    
+
 .main-container {
-	background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
-	background-color: #171627;
-	box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
-	border: 3px solid rgba(255, 255, 255, 0.2);
-	border-radius: 8px;
-	text-align: center;
-	width: 90%;
-	max-width: 600px;
-	animation: fadeInScale 1s ease-out;
+    background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+    background-color: #171627;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    padding: 10px;
+    display: flex; /* Make main-container a flex container */
+    flex-direction: column; /* Stack children vertically */
+    gap: 10px;
+    justify-content: flex-start;
+    animation: fadeInScale 1s ease-out;
+}
+
+.video-container {
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.phrase-container {
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.words-container {
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
 }
 
 .players-container {
@@ -133,7 +161,6 @@ body {
         background: linear-gradient(135deg, var(--orange-gradient-start), var(--orange-gradient-end));
     }
 }
-
     </style>
 </head>
 <body>
@@ -151,6 +178,16 @@ body {
             <div class="player-content"></div>
         </div>
     </div>
+    
+    <div class="video-container">
+    </div>
+    
+    <div class="phrase-container">
+    </div>
+    
+    <div class="words-container">
+    </div>
+</div>
 
 <script>
 function createClock(clockFaceId) {

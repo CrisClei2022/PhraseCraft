@@ -96,64 +96,20 @@ button:active {
         
 /* Menu Button and Menu Styles */
 #menu-button {
-    position: fixed; /* Change from absolute to fixed */
-    top: 10%; /* Keep your desired top position */
-    left: 50%; /* Add this to center horizontally */
-    transform: translateX(-50%); 
-    width: 30px;
-    height: 30px;
+    position: absolute; /* This is likely in a parent or inherited from elsewhere */
+    top: 60%;
+    right: 38%;
     background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 1000;
-    display: flex; /* Make main-container a flex container */
-    flex-direction: column; /* Stack children vertically */
-    justify-content: flex-start;
-    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-    padding: 0; /* Removendo padding que pode interferir */
 }
       
 #menu-button:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    transform: translateY(-1px);
 }
 
-.menu-icon {
-    width: 30px;
-    height: 3px;
-    background-color: white;
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.menu-icon:before, .menu-icon:after {
-    content: '';
-    position: absolute;
-    width: 30px;
-    height: 3px;
-    background-color: white;
-    transition: all 0.3s ease;
-    left: 0; /* Garantir alinhamento horizontal */
-}
-      
-.menu-icon:before {
-    transform: translateY(-10px);
-}
-
-.menu-icon:after {
-    transform: translateY(10px);
-}
-
-#menu-button.active .menu-icon {
+#menu-button.active {
+    transform: translateY(1px);
     background-color: transparent;
-}
-
-#menu-button.active .menu-icon:before {
-    transform: rotate(45deg);
-}
-
-#menu-button.active .menu-icon:after {
-    transform: rotate(-45deg);
 }
 
 #menu-overlay {
@@ -167,7 +123,6 @@ button:active {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s;
@@ -366,6 +321,13 @@ button:active {
     animation: fadeInScale 1s ease-out;
 }
 
+.title-container {
+    display: flex; /* Make it a flex container */
+    flex-direction: column; /* Stack buttons vertically within their container */
+    gap: ; /* Add some space between video and buttons */
+    align-items: flex-start; /* Align items to the top (or center, stretch, etc., as needed) */
+}
+
 .content-row {
     display: flex; /* Make it a flex container */
     flex-direction: row; /* Arrange children horizontally */
@@ -533,10 +495,7 @@ wrong-word-card.error {
 <body>
 <div class="main-container">
     
-    <!-- Menu Button -->
-    <button id="menu-button">
-        <span>Lições</span>
-    </button>
+    
     
     <div class="players-container">
     
@@ -548,7 +507,14 @@ wrong-word-card.error {
             </div>
         </div>
         
-		<h2>Phrasecraft</h2>
+       <div class="title-container">
+            <h2>Phrasecraft</h2>
+            <!-- Menu Button -->
+            <button id="menu-button">
+                <span>Lições</span>
+            </button>
+        </div>
+		
 
         <div class="player-container">
             <div class="clock-face" id="clock-face2"></div>

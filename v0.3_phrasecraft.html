@@ -112,12 +112,37 @@ button:active {
     animation: fadeInScale 1s ease-out;
 }
 
+.content-row {
+    display: flex; /* Make it a flex container */
+    flex-direction: row; /* Arrange children horizontally */
+    gap: 15px; /* Add some space between video and buttons */
+    align-items: flex-start; /* Align items to the top (or center, stretch, etc., as needed) */
+    width: 100%; /* Make sure it takes full width of main-container */
+    flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+}
+
+/* Optional: Adjust width of video-container and buttons within content-row */
+.content-row .video-container {
+    flex: 2; /* Allows video to take more space relative to buttons */
+    min-width: 250px; /* Ensures video doesn't get too small */
+}
+
+.content-row #buttons {
+    flex: 1; /* Buttons take remaining space */
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically within their container */
+    gap: 8px; /* Space between buttons */
+    padding-top: 3.5%;
+    align-items: stretch; /* Make buttons fill the width of their container */
+    min-width: 120px; /* Ensures buttons don't get too small */
+}
+
 .video-container {
     border: 2px solid green;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 10px;
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    background-color: #000;
 }
 
 .phrase-container {
@@ -270,23 +295,21 @@ wrong-word-card.error {
         </div>
     </div>
     
-    <div class="video-container">
+    <div class="content-row"> 
+        <div class="video-container">
+            </div>
+        
+        <div id="buttons">
+            <button id="repeat" style="background: linear-gradient(to bottom, #ffc078 0%, #ffa94d 50%, #e59442 100%);">Tocar Trecho</button>
+            <button id="readPhrase" style="background: linear-gradient(to bottom, #78c0ff 0%, #5babf0 50%, #4d98e5 100%);">Voz Sintetica</button>
+            <button id="giveUp" style="background: linear-gradient(to bottom, #ff7878 0%, #ff6666 50%, #e55c5c 100%);">Desistir</button>
+        </div>
     </div>
     
     <div class="phrase-container">
     </div>
     
     <div class="word-container">
-    </div>
-    
-	<div id="buttons">
-        <button id="repeat" style="background: linear-gradient(to bottom, #ffc078 0%, #ffa94d 50%, #e59442 100%);">Tocar Trecho</button>
-        <button id="readPhrase" style="background: linear-gradient(to bottom, #78c0ff 0%, #5babf0 50%, #4d98e5 100%);">Voz Sintetica</button>
-        <button id="giveUp" style="background: linear-gradient(to bottom, #ff7878 0%, #ff6666 50%, #e55c5c 100%);">Desistir</button>
-    </div>
-    
-    <div id="botao-avancar">
-        <button id="sent" style="display: none;">Enviar</button>
     </div>
     
 </div>

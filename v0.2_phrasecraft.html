@@ -111,7 +111,6 @@ body {
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    align-items: flex-start;
     transform: translateY(calc((85px - 70px) / 2));
     /*z-index: ;*/
 }
@@ -163,6 +162,14 @@ body {
         background: linear-gradient(135deg, var(--orange-gradient-start), var(--orange-gradient-end));
     }
 }
+
+.player-content h6 {
+    margin: 0; /* Remove default margins from h6 and p for tighter control */
+    margin-bottom: 0.4em;
+    padding-top: 0.4em;
+    line-height: 1.6em; /* Adjust line height if needed */
+    font-size: 0.7em; /* Adjust font size if too large */
+}
     </style>
 </head>
 <body>
@@ -171,14 +178,20 @@ body {
     
         <div class="player-container">
             <div class="clock-face" id="clock-face1"></div>
-            <div class="player-content"></div>
+            <div class="player-content">
+				<h6 class="score" id="scorePlayer1">0</h6>
+				<h6>Jogador 1</h6>
+            </div>
         </div>
         
 		<h1>Phrasecraft</h1>
 
         <div class="player-container">
             <div class="clock-face" id="clock-face2"></div>
-            <div class="player-content"></div>
+            <div class="player-content">
+				<h6 class="score" id="scorePlayer2">0</h6>
+				<h6>Jogador 2</h6>
+            </div>
         </div>
     </div>
     

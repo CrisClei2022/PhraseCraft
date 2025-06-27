@@ -1,640 +1,265 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PhraseCraft</title>
+    <title>Relógio de Preenchimento Circular</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background-color: #e0f2f7; /* Um azul claro suave */
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+:root {
+    /* Cores de Fundo e Sombra */
+    --background-color: #f0f0f0;
+    --shadow-color: rgba(0, 0, 0, 0.3);
 
-        .container {
-            background-color: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            width: 100%;
-            max-width: 800px;
-            box-sizing: border-box;
-        }
+    /* Novos Degradês */
+    --blue-gradient-start: #007bff; /* Azul vibrante */
+    --blue-gradient-end: #0056b3;    /* Azul mais escuro */
 
-        h1 {
-            color: #007bff; /* Azul vibrante */
-            margin-bottom: 25px;
-            font-size: 2.5em;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-        }
+    --grey-gradient-start: #d0d0d0; /* Agora o 'escuro' (que era o fim) */
+    --grey-gradient-end: #e0e0e0;    /* Agora o 'claro' (que era o início) */
 
-        .placares {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-bottom: 30px;
-            gap: 15px; /* Define um espaçamento de 15px entre os itens flexíveis */
-        }
+    --red-gradient-start: #dc3545; /* Vermelho vibrante */
+    --red-gradient-end: #a71d2a;    /* Vermelho mais escuro */
 
-        .player-content {
-            background-color: #ffffff; /* Fundo branco para a div interna */
-            padding: 15px 18px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    --orange-gradient-start: #ffc107; /* Laranja vibrante */
+    --orange-gradient-end: #e0a800;    /* Laranja mais escuro */
 
-        .player-score-card {
-            background-color: #f0f0f0;
-            padding: 15px 18px;
-            border-radius: 8px;
-            width: 22%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease-in-out;
-            position: relative; /* Necessário para a borda do cronômetro */
-            overflow: hidden; /* Garante que a borda não vaze */
-        }
+    /* Variáveis para o progresso do JavaScript (mantidas) */
+    --progress: 0; /* 0 a 100 - Controla o preenchimento pelo JS */
+}
 
-        .player-score-card h2 {
-            margin-top: 0;
-            color: #555;
-            font-size: 1.5em;
-        }
+body {
+    display: flex;
+    justify-content: center;
+    /* Change this line */
+    align-items: flex-start;
+	background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
+    margin: 0;
+	padding-top: 1.2%;
+	font-family: 'Orbitron', sans-serif;
+	color: #00ccff;
+	text-shadow: 0 0 20px rgba(0, 255, 204, 0.8), 0 0 30px rgba(0, 255, 204, 0.6);
+	letter-spacing: 1.5px;
+    overflow: hidden;
+}
 
-        .player-score-card .score {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #28a745; /* Verde para pontuação */
-            margin-bottom: 5px;
-        }
+.main-container {
+    background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+    background-color: #171627;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    padding: 0px;
+    display: flex; /* Make main-container a flex container */
+    flex-direction: column; /* Stack children vertically */
+    gap: 10px;
+    justify-content: flex-start;
+    animation: fadeInScale 1s ease-out;
+}
 
-        /* Estilo para a borda do cronômetro */
-        .player-score-card.player-active {
-            /* Borda base transparente */
-            background-clip: padding-box; /* Garante que o background não vá para a borda */
-            position: relative;
-            z-index: 1;
-        }
+.video-container {
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
 
-        /* O gradiente da borda será aplicado via JS para animar */
-        .player-score-card.player-active::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            margin: -4px;
-            border-radius: 8px;
-            background: conic-gradient(from 0deg, transparent 0% var(--timer-progress-empty, 0%), var(--cor-final-timer) var(--timer-progress-empty, 0%) 360deg);
-            transition: background 0.3s ease-out; /* Transição mais suave para o gradiente */
-        }
-        
-        /* Animação de piscar para o tempo acabando */
-        @keyframes blink-timer {
-            0%, 100% {
-                background: conic-gradient(from 0deg, transparent 0% var(--timer-progress-empty, 0%), #dc3545 var(--timer-progress-empty, 0%) 360deg); /* Vermelho */
-            }
-            50% {
-                background: conic-gradient(from 0deg, transparent 0% var(--timer-progress-empty, 0%), #ffc107 var(--timer-progress-empty, 0%) 360deg); /* Laranja */
-            }
-        }
+.phrase-container {
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
 
-        .player-score-card.player-active.time-almost-up::before {
-            /* Mudar para vermelho/laranja quando o tempo está acabando */
-            animation: blink-timer 1s infinite alternate; /* Aplica a animação */
-        }
+.words-container {
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
 
-        .word-cards-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            min-height: 80px; /* Garante espaço mesmo sem cards */
-        }
+.players-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    border: 2px solid green;
+}
 
-        .word-card {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1.4em;
-            font-weight: bold;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.2s ease, background-color 0.2s ease;
-            user-select: none; /* Impede seleção de texto */
-        }
+/* New container for the second clock to place it next to the first one */
+.player-container {
+    position: relative;
+    width: 85px;
+    height: 85px;
+    display: flex;
+    justify-content: center;
+    padding: 1%;
+    border: 2px solid green;
+}
 
-        .word-card:hover:not(.disabled) {
-            transform: translateY(-3px) scale(1.02);
-            background-color: #0056b3;
-        }
+.player-content {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    align-items: flex-start;
+    transform: translateY(calc((85px - 70px) / 2));
+    /*z-index: ;*/
+}
 
-        .word-card.disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-            box-shadow: none;
-        }
+.clock-face {
+    position: absolute;
+    width: 85px;
+    height: 85px;
+    background: linear-gradient(135deg, var(--blue-gradient-start), var(--blue-gradient-end));
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    align-items: flex-start;
+    transition: background 0.7s ease-in-out;
+}
 
-        /* Animação para card errado (tremer) */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-            20%, 40%, 60%, 80% { transform: translateX(5px); }
-        }
+/* Onde a magia do preenchimento circular acontece (sempre cinza) */
+.clock-face::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    /* A cor de preenchimento SEMPRE será cinza */
+    background: conic-gradient(
+        var(--grey-gradient-start) calc(var(--progress) * 1%),
+        var(--grey-gradient-end) calc(var(--progress) * 1% + 1%),
+        transparent calc(var(--progress) * 1% + 1%)
+    );
+    transform: rotate(-0deg);
+    transform-origin: center;
+    transition: background 0.1s linear; /* Transição suave para o preenchimento */
+}
 
-        .word-card.error {
-            animation: shake 0.4s ease-in-out;
-            background-color: #dc3545; /* Vermelho */
-        }
+/* Estilo para quando o tempo estiver nos 30% finais (ativado pelo JavaScript) */
+.clock-face.time-almost-up {
+    /* O fundo do clock-face agora piscará com esta animação */
+    animation: blink-red-to-orange 1s infinite alternate;
+}
 
-        .mounted-phrase-container {
-            background-color: #f8f9fa;
-            border: 2px dashed #007bff;
-            padding: 20px;
-            border-radius: 8px;
-            min-height: 60px; /* Garante que o espaço não encolha */
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #343a40;
-            margin-bottom: 30px;
-            text-transform: capitalize; /* Capitaliza a primeira letra */
-        }
-
-        .mounted-word {
-            padding: 5px 10px;
-            border-bottom: 2px solid #ccc; /* Linha para o underscore */
-            min-width: 50px; /* Largura mínima para o underscore */
-            text-align: center;
-        }
-
-        /* Estilo para os underscores */
-        .mounted-word.placeholder {
-            color: #ccc;
-        }
-
-        .message {
-            margin-top: 20px;
-            font-size: 1.3em;
-            font-weight: bold;
-            min-height: 1.5em; /* Garante espaço */
-            color: #555;
-        }
-
-        .message.success {
-            color: #28a745; /* Verde para sucesso */
-        }
-
-        .message.error {
-            color: #dc3545; /* Vermelho para erro */
-        }
-
-        .message.info {
-            color: #007bff; /* Azul para informação */
-        }
-
-        button {
-            padding: 12px 25px;
-            font-size: 1.2em;
-            background-color: #6c757d; /* Cinza para o botão */
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            margin-top: 20px;
-        }
-
-        button:hover:not(:disabled) {
-            background-color: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
-        /* Responsividade básica */
-        @media (max-width: 600px) {
-            .container {
-                padding: 20px;
-            }
-            h1 {
-                font-size: 2em;
-            }
-            .player-score-card {
-                width: 48%;
-                padding: 10px;
-            }
-            .player-score-card h2 {
-                font-size: 1.2em;
-            }
-            .player-score-card .score {
-                font-size: 2em;
-            }
-            .word-card {
-                padding: 8px 15px;
-                font-size: 1.2em;
-            }
-            .mounted-phrase-container {
-                font-size: 1.5em;
-                padding: 15px;
-            }
-            button {
-                font-size: 1.1em;
-                padding: 10px 20px;
-            }
-        }
+/* Animação para o piscar de vermelho degradê para laranja degradê NO FUNDO DO CLOCK-FACE */
+@keyframes blink-red-to-orange {
+    0%, 100% {
+        background: linear-gradient(135deg, var(--red-gradient-start), var(--red-gradient-end));
+    }
+    50% {
+        background: linear-gradient(135deg, var(--orange-gradient-start), var(--orange-gradient-end));
+    }
+}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>PhraseCraft</h1>
-
-        <div class="placares">
-            <div id="player1ScoreCard" class="player-score-card player-active">
-                <div class="player-content">
-                    <h2>Jogador 1</h2>
-                    <p class="score" id="scorePlayer1">0</p>
-                </div>
-            </div>
-
-            <div id="player2ScoreCard" class="player-score-card">
-                <div class="player-content">
-                    <h2>Jogador 2</h2>
-                    <p class="score" id="scorePlayer2">0</p>
-                </div>
-            </div>
+<div class="main-container">
+    <div class="players-container">
+    
+        <div class="player-container">
+            <div class="clock-face" id="clock-face1"></div>
+            <div class="player-content"></div>
         </div>
+        
+		<h1>Phrasecraft</h1>
 
-        <div class="word-cards-container" id="wordCardsContainer"></div>
-
-        <div class="mounted-phrase-container" id="mountedPhraseContainer"></div>
-
-        <p class="message" id="gameMessage"></p>
-
-        <button id="newGameButton">Novo Jogo</button>
+        <div class="player-container">
+            <div class="clock-face" id="clock-face2"></div>
+            <div class="player-content"></div>
+        </div>
     </div>
+    
+    <div class="video-container">
+    </div>
+    
+    <div class="phrase-container">
+    </div>
+    
+    <div class="words-container">
+    </div>
+</div>
 
-    <script>
-        // --- Dados do Jogo ---
-        const frasesDoJogo = [
-            "O cachorro comeu a casa",
-            "O sol brilha no céu azul",
-            "A água é essencial para a vida",
-            "Gatos são animais muito fofos",
-            "Programar é divertido e desafiador"
-        ];
+<script>
+function createClock(clockFaceId) {
+    const clockFace = document.getElementById(clockFaceId);
 
-        const TEMPO_POR_TURNO_SEGUNDOS = 10; // 10 segundos por turno
-        const INTERVALO_ATUALIZACAO_MS = 100; // Atualiza o cronômetro a cada 100 milissegundos (0.1s)
+    if (!clockFace) {
+        console.error(`Clock face with ID '${clockFaceId}' not found.`);
+        return; // Exit if the element doesn't exist
+    }
 
-        let estadoDoJogo = {
-            turnoAtual: 1,
-            jogadorAtual: 1, // 1 ou 2
-            pontuacaoJogador1: 0,
-            pontuacaoJogador2: 0,
-            fraseCorreta: "", // Ex: "O cachorro comeu a casa"
-            palavrasCorretasArray: [], // Ex: ["o", "cachorro", "comeu", "a", "casa"]
-            palavrasEmbaralhadasParaCards: [], // Ex: [{word: "cachorro", originalIndex: 1, clicked: false}]
-            palavrasAcertadas: [], // Ex: ["___", "cachorro", "___", "___", "___"]
-            historicoJogadas: [],
-            jogoAtivo: false,
-            timerInterval: null, // Para controlar o setInterval do timer
-            tempoRestante: TEMPO_POR_TURNO_SEGUNDOS
-        };
+    let currentProgress = 0;
+    const totalTimeMs = 10000; // For example, 10 seconds
+    const updateIntervalMs = 16; // Approximately 60fps
 
-        // --- Elementos HTML ---
-        const player1ScoreCard = document.getElementById('player1ScoreCard');
-        const player2ScoreCard = document = document.getElementById('player2ScoreCard');
-        const scorePlayer1Display = document.getElementById('scorePlayer1');
-        const scorePlayer2Display = document.getElementById('scorePlayer2');
-        const wordCardsContainer = document.getElementById('wordCardsContainer');
-        const mountedPhraseContainer = document.getElementById('mountedPhraseContainer');
-        const gameMessageDisplay = document.getElementById('gameMessage');
-        const newGameButton = document.getElementById('newGameButton');
+    const steps = totalTimeMs / updateIntervalMs;
+    const progressPerStep = 100 / steps;
 
-        // --- Funções Auxiliares ---
+    let intervalId;
 
-        /**
-         * Embaralha um array (algoritmo Fisher-Yates).
-         * @param {Array} array - O array a ser embaralhado.
-         * @returns {Array} - O array embaralhado.
-         */
-        function shuffleArray(array) {
-            const shuffled = [...array];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            return shuffled;
-        }
+    function updateClock() {
+        if (currentProgress <= 100) {
+            clockFace.style.setProperty('--progress', currentProgress);
 
-        /**
-         * Atualiza o estilo da borda do cronômetro com base no tempo restante.
-         */
+            const percentageRemaining = 100 - currentProgress;
 
-        function atualizarBordaCronometro() {
-            const progressoEsgotado = (1 - (estadoDoJogo.tempoRestante / TEMPO_POR_TURNO_SEGUNDOS)) * 100;
-            const playerCard = estadoDoJogo.jogadorAtual === 1 ? player1ScoreCard : player2ScoreCard;
-       
-            playerCard.style.setProperty('--timer-progress-empty', `${progressoEsgotado}%`);
-
-            if (estadoDoJogo.tempoRestante <= TEMPO_POR_TURNO_SEGUNDOS / 3 && estadoDoJogo.tempoRestante > 0) {
-                playerCard.classList.add('time-almost-up');
+            // Logic to add/remove the class that controls the background animation
+            if (percentageRemaining <= 40 && percentageRemaining > 0) {
+                clockFace.classList.add('time-almost-up');
             } else {
-                playerCard.classList.remove('time-almost-up');
-                // Opcional: Se quiser resetar a cor da borda para o azul padrão quando não estiver piscando
-                // e a animação não estiver ativa, você pode definir aqui.
-                playerCard.style.setProperty('--cor-final-timer', '#007bff');
-            }
-        }
-
-        /**
-         * Inicia ou reinicia o cronômetro do turno.
-         */
-        function iniciarCronometro() {
-            clearInterval(estadoDoJogo.timerInterval); // Limpa qualquer cronômetro anterior
-            estadoDoJogo.tempoRestante = TEMPO_POR_TURNO_SEGUNDOS;
-            atualizarBordaCronometro(); // Atualiza a borda imediatamente
-
-            estadoDoJogo.timerInterval = setInterval(() => {
-                estadoDoJogo.tempoRestante -= (INTERVALO_ATUALIZACAO_MS / 1000); // Reduz o tempo em frações de segundo
-
-                if (estadoDoJogo.tempoRestante < 0) { // Garante que não vá abaixo de zero
-                    estadoDoJogo.tempoRestante = 0;
-                }
-
-                atualizarBordaCronometro();
-
-                if (estadoDoJogo.tempoRestante <= 0) {
-                    clearInterval(estadoDoJogo.timerInterval);
-                    lidarComTempoEsgotado();
-                }
-            }, INTERVALO_ATUALIZACAO_MS); // Atualiza a cada 100 milissegundos
-        }
-
-        /**
-         * Lida com a situação quando o tempo de um jogador se esgota.
-         */
-        function lidarComTempoEsgotado() {
-            gameMessageDisplay.textContent = `Tempo esgotado para o Jogador ${estadoDoJogo.jogadorAtual}!`;
-            gameMessageDisplay.className = "message error";
-
-            // O oponente ganha um ponto por tempo esgotado do outro
-            if (estadoDoJogo.jogadorAtual === 1) {
-                estadoDoJogo.pontuacaoJogador2++;
-            } else {
-                estadoDoJogo.pontuacaoJogador1++;
-            }
-            atualizarPlacares(); // Atualiza a pontuação na interface
-
-            passarTurno();
-        }
-
-        /**
-         * Passa o turno para o próximo jogador.
-         */
-        function passarTurno() {
-            estadoDoJogo.turnoAtual++;
-            estadoDoJogo.jogadorAtual = estadoDoJogo.jogadorAtual === 1 ? 2 : 1;
-
-            // Remove a classe 'player-active' do jogador anterior
-            player1ScoreCard.classList.remove('player-active');
-            player2ScoreCard.classList.remove('player-active');
-
-            // Adiciona a classe 'player-active' ao jogador atual
-            if (estadoDoJogo.jogadorAtual === 1) {
-                player1ScoreCard.classList.add('player-active');
-            } else {
-                player2ScoreCard.classList.add('player-active');
+                clockFace.classList.remove('time-almost-up');
             }
 
-            // Reinicia o cronômetro para o novo turno
-            if (estadoDoJogo.jogoAtivo) {
-                iniciarCronometro();
-            }
-        }
+            currentProgress += progressPerStep;
+        } else {
+            clearInterval(intervalId);
+            clockFace.classList.remove('time-almost-up'); // Ensures the class is removed at the end
+            console.log(`Clock '${clockFaceId}' fill complete!`);
 
-        /**
-         * Atualiza os placares dos jogadores na interface.
-         */
-        function atualizarPlacares() {
-            scorePlayer1Display.textContent = estadoDoJogo.pontuacaoJogador1;
-            scorePlayer2Display.textContent = estadoDoJogo.pontuacaoJogador2;
-        }
-
-        /**
-         * Renderiza os cards de palavras embaralhadas no container.
-         */
-        function renderizarCardsDePalavras() {
-            wordCardsContainer.innerHTML = ''; // Limpa cards existentes
-            estadoDoJogo.palavrasEmbaralhadasParaCards.forEach((wordObj, index) => {
-                const card = document.createElement('div');
-                card.classList.add('word-card');
-                card.textContent = wordObj.word;
-                card.dataset.index = index; // Guarda o índice no array embaralhado
-
-                if (wordObj.clicked) { // Se já foi clicado (e "usado")
-                    card.classList.add('disabled');
-                } else {
-                    card.addEventListener('click', handleCardClick);
-                }
-                wordCardsContainer.appendChild(card);
-            });
-        }
-
-        /**
-         * Renderiza a frase sendo montada (com underscores e palavras acertadas).
-         */
-        function renderizarFraseSendoMontada() {
-            mountedPhraseContainer.innerHTML = ''; // Limpa a frase existente
-            estadoDoJogo.palavrasAcertadas.forEach(word => {
-                const span = document.createElement('span');
-                span.classList.add('mounted-word');
-                if (word === '___') {
-                    span.classList.add('placeholder');
-                    span.textContent = '___';
-                } else {
-                    span.textContent = word;
-                }
-                mountedPhraseContainer.appendChild(span);
-            });
-        }
-
-        /**
-         * Lida com o clique em um card de palavra.
-         * @param {Event} event - O evento de clique.
-         */
-        function handleCardClick(event) {
-            if (!estadoDoJogo.jogoAtivo) return; // Não permite cliques se o jogo não estiver ativo
-
-            const clickedCard = event.target;
-            const clickedWord = clickedCard.textContent.toLowerCase();
-            const clickedCardIndex = parseInt(clickedCard.dataset.index);
-
-            // Adiciona feedback visual de "tremor" e impede cliques repetidos imediatos
-            clickedCard.classList.add('error');
             setTimeout(() => {
-                clickedCard.classList.remove('error');
-            }, 400); // Remove a classe após a animação
-
-            // Encontra a próxima posição na frase correta que precisa ser preenchida
-            const proximaPosicaoVazia = estadoDoJogo.palavrasAcertadas.findIndex(word => word === '___');
-
-            // Se não há mais posições vazias, a frase já está completa (caso de bug ou clique após vitória)
-            if (proximaPosicaoVazia === -1) {
-                gameMessageDisplay.textContent = "A frase já está completa! Inicie um novo jogo.";
-                gameMessageDisplay.className = "message info";
-                return;
-            }
-
-            const palavraEsperada = estadoDoJogo.palavrasCorretasArray[proximaPosicaoVazia];
-
-            let acertou = false;
-            let mensagem = "";
-
-            if (clickedWord === palavraEsperada) {
-                // Remove a palavra clicada da lista de cards disponíveis (marcamos como clicada)
-                estadoDoJogo.palavrasEmbaralhadasParaCards[clickedCardIndex].clicked = true;
-
-                // Preenche a palavra na posição correta da frase
-                estadoDoJogo.palavrasAcertadas[proximaPosicaoVazia] = estadoDoJogo.palavrasCorretasArray[proximaPosicaoVazia];
-
-                acertou = true;
-                mensagem = `Jogador ${estadoDoJogo.jogadorAtual} acertou a palavra "${clickedWord}"!`;
-                gameMessageDisplay.className = "message success";
-
-                // Adiciona ponto ao jogador que acertou
-                if (estadoDoJogo.jogadorAtual === 1) {
-                    estadoDoJogo.pontuacaoJogador1++;
-                } else {
-                    estadoDoJogo.pontuacaoJogador2++;
-                }
-            } else {
-                mensagem = `Jogador ${estadoDoJogo.jogadorAtual} errou. "${clickedWord}" não é a próxima palavra.`;
-                gameMessageDisplay.className = "message error";
-
-                // O oponente ganha um ponto por erro
-                if (estadoDoJogo.jogadorAtual === 1) {
-                    estadoDoJogo.pontuacaoJogador2++;
-                } else {
-                    estadoDoJogo.pontuacaoJogador1++;
-                }
-            }
-
-            // Adicionar jogada ao histórico (opcional para debug ou log futuro)
-            estadoDoJogo.historicoJogadas.push({
-                turno: estadoDoJogo.turnoAtual,
-                jogador: estadoDoJogo.jogadorAtual,
-                palavraClicada: clickedWord,
-                acertou: acertou,
-                fraseParcial: estadoDoJogo.palavrasAcertadas.join(' ')
-            });
-
-            atualizarPlacares();
-            renderizarCardsDePalavras(); // Re-renderiza para desativar o card clicado
-            renderizarFraseSendoMontada();
-
-            // Verifica se a frase inteira foi acertada
-            const fraseMontadaCompleta = estadoDoJogo.palavrasAcertadas.join(' ');
-            const fraseCorretaCompleta = estadoDoJogo.palavrasCorretasArray.join(' ');
-
-            if (fraseMontadaCompleta === fraseCorretaCompleta) {
-                clearInterval(estadoDoJogo.timerInterval); // Para o cronômetro
-                estadoDoJogo.jogoAtivo = false;
-                gameMessageDisplay.innerHTML = `Player ${estadoDoJogo.jogadorAtual}<p><span style="font-size: 1.3em; font-weight: bold; color: inherit;">WIN!</span></p>`;
-                gameMessageDisplay.className = "message success";
-                desativarInteracao(); // Desativa cards e botões
-                return;
-            }
-
-            // Passa o turno se o jogo ainda estiver ativo
-            passarTurno();
-            gameMessageDisplay.textContent += ` Agora é a vez do Jogador ${estadoDoJogo.jogadorAtual}.`;
-            gameMessageDisplay.className += " info"; // Adiciona classe para mensagem informativa
+                currentProgress = 0;
+                startClock();
+            }, 2000);
         }
+    }
 
-        /**
-         * Desativa a interação com os cards quando o jogo não está ativo.
-         */
-        function desativarInteracao() {
-            document.querySelectorAll('.word-card').forEach(card => {
-                card.classList.add('disabled');
-                card.removeEventListener('click', handleCardClick);
-            });
-        }
+    function startClock() {
+        currentProgress = 0;
+        clockFace.classList.remove('time-almost-up'); // Ensures the class is removed on restart
+        // The clock-face background will reset to blue when the time-almost-up class is removed
+        intervalId = setInterval(updateClock, updateIntervalMs);
+    }
 
-        /**
-         * Ativa a interação com os cards no início de um novo jogo.
-         */
-        function ativarInteracao() {
-            document.querySelectorAll('.word-card').forEach(card => {
-                card.classList.remove('disabled');
-                card.addEventListener('click', handleCardClick);
-            });
-        }
+    // Return the start function so it can be controlled externally, or just start it immediately
+    return {
+        start: startClock,
+        stop: () => clearInterval(intervalId) // Add a stop method for control
+    };
+}
 
-        /**
-         * Inicializa um novo jogo.
-         */
-        function iniciarNovoJogo() {
-            clearInterval(estadoDoJogo.timerInterval); // Garante que nenhum timer antigo esteja rodando
+document.addEventListener('DOMContentLoaded', () => {
+    // To use it:
+    const clock1 = createClock('clock-face1');
+    clock1.start(); // Start the clock for 'clock-face1'
 
-            const fraseAleatoria = frasesDoJogo[Math.floor(Math.random() * frasesDoJogo.length)];
-
-            estadoDoJogo.fraseCorreta = fraseAleatoria;
-            estadoDoJogo.palavrasCorretasArray = fraseAleatoria.toLowerCase().split(' ');
-
-            // Cria objetos para as palavras embaralhadas, mantendo o originalIndex
-            estadoDoJogo.palavrasEmbaralhadasParaCards = shuffleArray(
-                estadoDoJogo.palavrasCorretasArray.map((word, index) => ({ word: word, originalIndex: index, clicked: false }))
-            );
-
-            estadoDoJogo.palavrasAcertadas = new Array(estadoDoJogo.palavrasCorretasArray.length).fill('___');
-            estadoDoJogo.turnoAtual = 1;
-            estadoDoJogo.jogadorAtual = 1;
-            estadoDoJogo.pontuacaoJogador1 = 0;
-            estadoDoJogo.pontuacaoJogador2 = 0;
-            estadoDoJogo.historicoJogadas = [];
-            estadoDoJogo.jogoAtivo = true;
-
-            atualizarPlacares();
-            renderizarCardsDePalavras();
-            renderizarFraseSendoMontada();
-            gameMessageDisplay.textContent = `Jogo iniciado! Jogador ${estadoDoJogo.jogadorAtual}, sua vez.`;
-            gameMessageDisplay.className = "message info";
-
-            // Garante que o jogador 1 comece ativo no placar
-            player1ScoreCard.classList.add('player-active');
-            player2ScoreCard.classList.remove('player-active');
-
-            iniciarCronometro(); // Inicia o cronômetro para o primeiro turno
-            ativarInteracao(); // Ativa os cards para clique
-        }
-
-        // --- Event Listeners ---
-        document.addEventListener('DOMContentLoaded', iniciarNovoJogo);
-        newGameButton.addEventListener('click', iniciarNovoJogo);
+    // You could create another one for 'clock-face2' if you had one:
+    const clock2 = createClock('clock-face2');
+    clock2.start();
+});
     </script>
 </body>
 </html>

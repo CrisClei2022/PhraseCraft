@@ -334,23 +334,26 @@ button:active {
     gap: 15px; /* Add some space between video and buttons */
     align-items: flex-start; /* Align items to the top (or center, stretch, etc., as needed) */
     width: 100%; /* Make sure it takes full width of main-container */
-    flex-wrap: wrap; /* Allows items to wrap to the next line on smaller screens */
+    flex-wrap: nowrap; /* ← MUDANÇA: impede quebra de linha */
+    overflow: hidden; /* ← ADICIONE: evita vazamento horizontal */
 }
 
 /* Optional: Adjust width of video-container and buttons within content-row */
 .content-row .video-container {
-    flex: 2; /* Allows video to take more space relative to buttons */
-    min-width: 250px; /* Ensures video doesn't get too small */
+    flex: 1 1 60%; /* ← MUDANÇA: base de 60% mas flexível */
+    min-width: 0; /* ← MUDANÇA: permite encolhimento */
+    max-width: 70%; /* ← ADICIONE: limita crescimento máximo */
 }
 
 .content-row #buttons {
-    flex: 1; /* Buttons take remaining space */
+    flex: 1 1 40%; /* ← MUDANÇA: base de 40% mas flexível */
     display: flex;
-    flex-direction: column; /* Stack buttons vertically within their container */
-    gap: 8px; /* Space between buttons */
+    flex-direction: column;
+    gap: 8px;
     padding-top: 3.5%;
-    align-items: stretch; /* Make buttons fill the width of their container */
-    min-width: 120px; /* Ensures buttons don't get too small */
+    align-items: stretch;
+    min-width: 0; /* ← MUDANÇA: permite encolhimento */
+    max-width: 40%; /* ← ADICIONE: limita crescimento máximo */
 }
 
 .video-container {
@@ -358,6 +361,7 @@ button:active {
     aspect-ratio: 16/9;
     position: relative;
     background-color: #000;
+    margin-top: 7.5%;
 }
 
 .phrase-container {
@@ -409,9 +413,10 @@ wrong-word-card.error {
     display: flex;
     justify-content: center;
     gap: 10px;
-    width: fit-content; /* Make the container only as wide as its content */
+    width: 100%; /* ← MUDANÇA: garante que não exceda o container pai */
+    max-width: 100%; /* ← ADICIONE: força limitação */
     margin: 0 auto;     /* Center it horizontally */
-    /* border: 2px solid green; somente para organizar elementos */
+    /*border: 2px solid green; somente para organizar elementos*/
 }
 
 .player-container {
@@ -508,7 +513,7 @@ wrong-word-card.error {
         </div>
         
        <div class="title-container">
-            <h2>Phrasecraft</h2>
+            <h3>Phrasecraft</h3>
             <!-- Menu Button -->
             <button id="menu-button">
                 <span>Lições</span>

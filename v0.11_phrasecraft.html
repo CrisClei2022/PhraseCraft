@@ -739,9 +739,7 @@
                 </video>
         
                 <div id="subtitle-content" class="hidden"> 
-                    <p>Este é um exemplo de texto de legenda que ficará visível quando o switch estiver ligado.</p>
-                    <p>Você pode imaginar isso como o texto de uma legenda de vídeo aparecendo aqui em tempo real.</p>
-                    <p>Quando o switch for desativado, este conteúdo será ocultado.</p>
+                	<!- As legendas aparecem aqui: -->
                 </div>
                 
             </div>
@@ -774,7 +772,7 @@
             },
             {
                 name: "Melanie Martinez - The Contortionist",
-                srtFile: "Melanie Martinez - The Contortionist.srt",
+                srtFile: "Melanie_Martinez-The_Contortionist.srt",
                 videoUrl: "https://files.catbox.moe/vxoldg.mp4"
             },
             {
@@ -807,13 +805,14 @@
         // Função para gerar o URL do CDN do jsDelivr para os arquivos SRT
         function getSrtCdnUrl(filename) {
             // URL base do jsDelivr para o seu repositório
-            const baseUrl = "https://cdn.jsdelivr.net/gh/CrisClei2022/listeningpro@main/";
+            const baseUrl = "https://raw.githubusercontent.com/CrisClei2022/srt/main/";
             // Retorna a URL completa
             return baseUrl + encodeURIComponent(filename);
         }
 
         // Função para carregar o arquivo SRT de uma URL
         async function loadSrtFromUrl(url) {
+            let srtLoadedSuccessfully = false;
             try {
                 showLoading(true);
                 const response = await fetch(url);
@@ -821,15 +820,65 @@
                     throw new Error(`Failed to load SRT: ${response.status}`);
                 }
                 const srtContent = await response.text();
-                processSrtContent(srtContent);
-                showLoading(false);
-                return true;
+                processSrtContent(srtContent); // This populates 'frases' and sets 'fraseAtual'
+                srtLoadedSuccessfully = true;
             } catch (error) {
                 console.error("Error loading SRT:", error);
-                alert("Erro ao carregar o arquivo de legendas. Por favor, tente novamente.");
-                showLoading(false);
-                return false;
+                alert("Erro ao carregar o arquivo de legendas. O jogo continuará sem sincronização de vídeo. Por favor, tente novamente mais tarde.");
+
+                // If SRT failed, ensure 'frases' array is populated with a fallback
+                // so the 'form the phrase' game can still proceed.
+                // This is a crucial part for your game's mechanics.
+                frases = [{
+                    tempoInicio: 0,
+                    tempoFim: 5, // A short duration for a generic phrase
+                    texto: "Aprenda a formar frases com prática diária"
+                }];
+
+                // Re-initialize game state with the fallback phrase
+                indiceFrase = 0;
+                fraseAtual = frases[indiceFrase];
+                palavrasEmbaralhadas = embaralharPalavras(fraseAtual.texto);
+                palavrasClicadas = [];
+                progresso = 0; // Reset progress for the new set of phrases
+                acertos = 0; // Reset score
+                fraseAcertada = false;
+
+                criarPalavras();
+                atualizarFrase(); // Update both the clicked phrase and subtitle content
+                atualizarProgresso();
+                atualizarPlacar();
+                document.getElementById('avancar').style.display = 'none';
+
+                // Disable video-related functionalities since SRT failed
+                if (videoElement) {
+                    videoElement.pause();
+                    videoElement.src = ''; // Clear video source
+                    videoElement.load(); // Reload to apply the empty source
+                    playerReady = false; // Video is not ready for playback
+                }
+                pararMonitorTempo(); // Stop any video time monitoring
+            } finally {
+                showLoading(false); // Always hide loading indicator
             }
+
+            // After attempting to load SRT (or falling back),
+            // always start the video monitoring if successful, or ensure it's off.
+            // The playerReady flag ensures video playback is only attempted if SRT was successful.
+            if (playerReady && fraseAtual && srtLoadedSuccessfully) {
+                // Only attempt to play video if SRT loaded and player is ready.
+                // This prevents trying to play a non-existent video after a failed SRT load.
+                // The game logic can then decide when to start the clocks.
+                reproduzirTrechoAtual();
+            } else if (!srtLoadedSuccessfully) {
+                // If SRT load failed, and we provided a fallback,
+                // let's ensure clocks are stopped or not started automatically by video events.
+                // The game's start logic (e.g., a "start game" button) should handle the clocks.
+                if (player1Clock) player1Clock.stop();
+                if (player2Clock) player2Clock.stop();
+            }
+
+            return srtLoadedSuccessfully; // Return true if SRT loaded, false otherwise
         }
 
         // Função para processar o conteúdo SRT
@@ -854,7 +903,7 @@
             fraseAcertada = false;
 
             criarPalavras();
-            atualizarFrase();
+            atualizarFrase(); // This call will now also update the 'subtitle-content' div
             atualizarProgresso();
             atualizarPlacar();
             document.getElementById('avancar').style.display = 'none';
@@ -1082,20 +1131,28 @@
             return 'en-US'; // Por padrão, usamos inglês
         }
 
-        // Função para atualizar a frase exibida
+        // Function to update the displayed phrase
         function atualizarFrase() {
             let fraseDiv = document.getElementById('frase');
+            let subtitleContentDiv = document.getElementById('subtitle-content'); // Get the subtitle content div
             fraseDiv.innerHTML = '';
-
-            // Adicionar as palavras já clicadas com espaço entre elas
+		
+            // Add the already clicked words with space between them
             palavrasClicadas.forEach((palavra) => {
                 const span = document.createElement('span');
                 span.textContent = palavra + ' '; // Add space here
-                span.classList.add('palavra-na-frase'); // Adiciona classe para estilização
+                span.classList.add('palavra-na-frase'); // Add class for styling
                 fraseDiv.appendChild(span);
             });
+		
+            // Update the subtitle-content div with the full current phrase
+            if (fraseAtual && subtitleContentDiv) {
+                subtitleContentDiv.textContent = fraseAtual.texto;
+            } else if (subtitleContentDiv) {
+                subtitleContentDiv.textContent = ''; // Clear if no current phrase
+            }
         }
-
+		
         // Função para verificar se a frase está completa
         function verificarFrase() {
             if (!fraseAtual) return;

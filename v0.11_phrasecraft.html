@@ -859,6 +859,38 @@
             atualizarPlacar();
             document.getElementById('avancar').style.display = 'none';
         }
+        
+        // Função para para controlar o Switch
+        function toggleSubtitlesVisibility() {
+        // 1. Obter referências aos elementos HTML
+        const subtitleContent = document.getElementById('subtitle-content'); // A div que contém o texto da legenda
+        const subtitleSwitch = document.getElementById('subtitleSwitch');   // O elemento completo do seu switch (o que você clica)
+        const switchLabel = document.getElementById('switchLabel');         // O span ou texto que mostra "ON/OFF"
+
+        // Se qualquer um dos elementos essenciais não for encontrado, saia da função para evitar erros.
+        if (!subtitleContent || !subtitleSwitch || !switchLabel) {
+            console.error("Erro: Elementos da legenda ou switch não encontrados no DOM.");
+            return;
+        }
+
+        // 2. Verificar o estado atual e alternar
+        // A classe 'hidden' controla a visibilidade (definida no seu CSS como display: none;)
+        const isHidden = subtitleContent.classList.contains('hidden');
+
+        if (isHidden) {
+            // Se estava oculto, agora vai exibir
+            subtitleContent.classList.remove('hidden'); // Remove a classe 'hidden' para mostrar
+            subtitleSwitch.classList.add('active');     // Adiciona a classe 'active' para estilizar o switch como "ligado"
+            switchLabel.textContent = 'Legendas: ON';   // Atualiza o texto do label
+            localStorage.setItem('subtitlesOn', 'true'); // Salva o estado como 'true' no armazenamento local
+        } else {
+            // Se estava visível, agora vai ocultar
+            subtitleContent.classList.add('hidden');    // Adiciona a classe 'hidden' para ocultar
+            subtitleSwitch.classList.remove('active');  // Remove a classe 'active' para estilizar o switch como "desligado"
+            switchLabel.textContent = 'Legendas: OFF';  // Atualiza o texto do label
+            localStorage.setItem('subtitlesOn', 'false'); // Salva o estado como 'false' no armazenamento local
+        }
+    }
 
         // Função para carregar uma lição
         function loadLesson(lessonIndex) {
@@ -1296,6 +1328,33 @@
                 setTimeout(() => {
                     toggleMenu();
                 }, 500);
+            }
+            
+		    const subtitleSwitch = document.getElementById('subtitleSwitch');
+            if (subtitleSwitch) {
+                subtitleSwitch.addEventListener('click', toggleSubtitlesVisibility);
+            } else {
+                console.warn("Elemento 'subtitleSwitch' não encontrado. O toggle de legendas pode não funcionar.");
+            }
+
+            // Carregar o estado inicial das legendas baseado no localStorage ao iniciar
+            // Nota: A função toggleSubtitlesVisibility já faz isso implicitamente quando chamada.
+            // Você pode chamar ela uma vez para garantir que o UI esteja correto na carga.
+            const subtitlesOnInitial = localStorage.getItem('subtitlesOn') === 'true';
+            const subtitleContent = document.getElementById('subtitle-content');
+            const switchLabel = document.getElementById('switchLabel');
+            const switchBody = document.querySelector('#subtitleSwitch .switch-body'); // Para o visual do switch
+
+            if (subtitleContent && switchLabel && switchBody) {
+                if (subtitlesOnInitial) {
+                    subtitleContent.classList.remove('hidden');
+                    switchBody.classList.add('active'); // Garante que o switch visualmente esteja ON
+                    switchLabel.textContent = 'Legendas: ON';
+                } else {
+                    subtitleContent.classList.add('hidden');
+                    switchBody.classList.remove('active'); // Garante que o switch visualmente esteja OFF
+                    switchLabel.textContent = 'Legendas: OFF';
+                }
             }
 
             // Adicionar listener para teclas de atalho

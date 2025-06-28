@@ -33,6 +33,7 @@
 
 body {
     display: flex;
+    height: 100vh;
     justify-content: center;
     /* Change this line */
     align-items: flex-start;
@@ -329,31 +330,38 @@ button:active {
 }
 
 .content-row {
-    display: flex; /* Make it a flex container */
-    flex-direction: row; /* Arrange children horizontally */
-    gap: 15px; /* Add some space between video and buttons */
-    align-items: flex-start; /* Align items to the top (or center, stretch, etc., as needed) */
-    width: 100%; /* Make sure it takes full width of main-container */
-    flex-wrap: nowrap; /* ← MUDANÇA: impede quebra de linha */
-    overflow: hidden; /* ← ADICIONE: evita vazamento horizontal */
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center; /* ← MUDANÇA: centraliza verticalmente */
+    justify-content: center; /* ← ADICIONE: centraliza horizontalmente */
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    min-height: 220px; /* ← ADICIONE: altura mínima para melhor centralização */
 }
 
-/* Optional: Adjust width of video-container and buttons within content-row */
+/* Ajustes para o container do vídeo */
 .content-row .video-container {
-    flex: 1 1 60%; /* ← MUDANÇA: base de 60% mas flexível */
-    min-width: 0; /* ← MUDANÇA: permite encolhimento */
-    max-width: 70%; /* ← ADICIONE: limita crescimento máximo */
+    flex: 1 1 60%;
+    min-width: 0;
+    max-width: 70%;
+    display: flex; /* ← ADICIONE: torna flexível */
+    align-items: center; /* ← ADICIONE: centraliza conteúdo verticalmente */
+    justify-content: center; /* ← ADICIONE: centraliza conteúdo horizontalmente */
 }
 
+/* Ajustes para os botões */
 .content-row #buttons {
-    flex: 1 1 40%; /* ← MUDANÇA: base de 40% mas flexível */
+    flex: 1 1 40%;
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding-top: 3.5%;
-    align-items: stretch;
-    min-width: 0; /* ← MUDANÇA: permite encolhimento */
-    max-width: 40%; /* ← ADICIONE: limita crescimento máximo */
+    align-items: center; /* ← MUDANÇA: centraliza botões horizontalmente */
+    justify-content: center; /* ← ADICIONE: centraliza botões verticalmente */
+    min-width: 0;
+    max-width: 40%;
+    padding: 0; /* ← MUDANÇA: remove padding-top */
 }
 
 .video-container {
@@ -361,9 +369,19 @@ button:active {
     aspect-ratio: 16/9;
     position: relative;
     background-color: #000;
-    margin-top: 7.5%;
 }
 
+/* Opcional: Para garantir que os botões tenham largura consistente */
+.content-row #buttons button {
+    width: 100%;
+    max-width: 200px; /* ← ADICIONE: largura máxima para os botões */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
 .phrase-container {
 	font-size: 24px;
     width: 95%;

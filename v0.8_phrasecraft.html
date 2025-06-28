@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhraseCraft</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto+Mono:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&display:wght@400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+:root {
+    /* Cores de Fundo e Sombra */
+    --background-color: #f0f0f0;
+    --shadow-color: rgba(0, 0, 0, 0.3);
+
+    /* Novos Degradês */
+    --blue-gradient-start: #007bff; /* Azul vibrante */
+    --blue-gradient-end: #0056b3;    /* Azul mais escuro */
+
+    --grey-gradient-start: #d0d0d0; /* Agora o 'escuro' (que era o fim) */
+    --grey-gradient-end: #e0e0e0;    /* Agora o 'claro' (que era o início) */
+
+    --red-gradient-start: #dc3545; /* Vermelho vibrante */
+    --red-gradient-end: #a71d2a;    /* Vermelho mais escuro */
+
+    --orange-gradient-start: #ffc107; /* Laranja vibrante */
+    --orange-gradient-end: #e0a800;    /* Laranja mais escuro */
+
+    /* Variáveis para o progresso do JavaScript (mantidas) */
+    --progress: 0; /* 0 a 100 - Controla o preenchimento pelo JS */
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    /* Change this line */
+    align-items: flex-start;
+	background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
+    margin: 0;
+	padding-top: 1.2%;
+	font-family: 'Orbitron', sans-serif;
+	color: #00ccff;
+    text-shadow:
+    0 0 15px rgba(0, 204, 255, 0.7), /* Tom da cor base mais claro */
+    0 0 25px rgba(0, 220, 255, 0.5), /* Um pouco mais claro e difuso */
+    0 0 35px rgba(0, 235, 255, 0.3); /* Mais claro e ainda mais difuso */
+	letter-spacing: 1.5px;
+    overflow: hidden;
+}
+
+        
+button {
+    padding: 10px 15px;
+    background: linear-gradient(to bottom, #5cbc5c 0%, #4CAF50 50%, #45a049 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+}
+
+button:hover {
+    background: linear-gradient(to bottom, #6ad26a 0%, #5cbc5c 50%, #4CAF50 100%);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    transform: translateY(-1px);
+}
+
+button:active {
+    background: linear-gradient(to bottom, #45a049 0%, #4CAF50 50%, #5cbc5c 100%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    transform: translateY(1px);
+}
+
+#avancar {
+    background: linear-gradient(to bottom, #42a5f5 0%, #2196F3 50%, #0b7dda 100%);
+    font-weight: bold;
+    padding: 12px 20px;
+    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+#avancar:hover {
+    background: linear-gradient(to bottom, #64b5f6 0%, #42a5f5 50%, #2196F3 100%);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.25);
+}
+
+#avancar:active {
+    background: linear-gradient(to bottom, #0b7dda 0%, #2196F3 50%, #42a5f5 100%);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+#menu-button {
+    justify-content: center;
+    background: transparent;
+    text-decoration: none;
+    color: #14fff1;
+    border: 0px solid #14fff1;
+    border-radius: 6px; /* Keep your existing border-radius */
+    box-shadow: 
+        0px 0px 16px rgba(0, 0, 0, 0.6), /* Existing outer shadow */
+        
+        /* Inner bottom glow - Adjust these values for the "egg tip" shape */
+        inset 0px -5px 6px -5px rgba(0, 204, 255, 0.7), /* Base inner glow */
+        inset 0px -7px 6px -8px rgba(0, 220, 255, 0.5), /* Lighter, more diffuse */
+        inset 0px -10px 6px -10px rgba(0, 235, 255, 0.3); /* Lightest, most diffuse */
+/* Add a transition for smooth movement */
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; /* Added box-shadow transition too */
+	
+    color: #14fff1; /* Your existing text color */
+    font-family: 'Audiowide', sans-serif; /* Apply the font */
+    letter-spacing: 0.05em; /* Optional: adds a slight space between letters for a techy look */
+    text-transform: uppercase; /* Optional: makes text uppercase, common in futuristic UIs */
+}
+#menu-button:hover {
+    box-shadow: 
+        0px 0px 16px rgba(0, 0, 0, 0.6), /* Existing outer shadow */
+        inset 0px -5px 6px -5px rgba(0, 204, 255, 0.7),
+        inset 0px -7px 6px -8px rgba(0, 220, 255, 0.5),
+        inset 0px -10px 6px -10px rgba(0, 235, 255, 0.3);
+    transform: translateY(-1px); /* Lifts up slightly on hover */
+}
+
+#menu-button:active {
+    box-shadow: 
+        0px 0px 8px rgba(0, 0, 0, 0.8), /* Make outer shadow darker/more intense when pressed */
+        inset 0px 0px 3px rgba(0, 204, 255, 0.9), /* More prominent inner glow when pressed */
+        inset 0px 0px 5px rgba(0, 220, 255, 0.7); /* Second layer of inner glow for depth */
+        /* You can adjust or remove the additional inset shadows here for a different press look */
+    
+    transform: translateY(2px); /* Moves down when clicked */
+    background-color: transparent; /* Keep background transparent */
+}
+
+#menu-overlay {
+    position: fixed;
+    top: 1%;
+    right: 1%;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    font-family: 'Audiowide', sans-serif;
+    
+    z-index: 999;display: flex; /* Enable Flexbox */
+    flex-direction: column; /* Stack items vertically (close-button above menu-items) */
+    align-items: center; /* This centers items horizontally in a column layout */
+    
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    backdrop-filter: blur(8px);
+}
+
+#menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+#menu-items {
+    justify-content: center;
+    width: 80%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #2b2e31;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+.menu-title {
+    justify-content: center;
+    background: transparent;
+    text-decoration: none;
+    color: #14fff1;
+    border: 0px solid #14fff1;
+    border-radius: 6px; /* Keep your existing border-radius */
+    box-shadow: 
+        0px 0px 16px rgba(0, 0, 0, 0.6), /* Existing outer shadow */
+        
+        /* Inner bottom glow - Adjust these values for the "egg tip" shape */
+        inset 0px -5px 6px -5px rgba(0, 204, 255, 0.7), /* Base inner glow */
+        inset 0px -7px 6px -8px rgba(0, 220, 255, 0.5), /* Lighter, more diffuse */
+        inset 0px -10px 6px -10px rgba(0, 235, 255, 0.3); /* Lightest, most diffuse */
+/* Add a transition for smooth movement */
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; /* Added box-shadow transition too */
+	
+    color: #14fff1; /* Your existing text color */
+    font-family: 'Audiowide', sans-serif; /* Apply the font */
+    letter-spacing: 0.05em; /* Optional: adds a slight space between letters for a techy look */
+    text-transform: uppercase; /* Optional: makes text uppercase, common in futuristic UIs */
+}
+
+.lesson-button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.lesson-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 14px rgba(0,0,0,0.2);
+}
+        
+.lesson-button:after {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+    transform: translateX(-100%);
+    transition: all 0.6s ease;
+}
+
+.lesson-button:hover:after {
+    transform: translateX(100%);
+}
+      
+.close-button {
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    padding: 0;
+    border: none;
+}
+
+.close-button:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(90deg);
+}
+
+.close-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+}
+
+.close-icon:before, .close-icon:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background-color: white;
+    top: 50%;
+    left: 0;
+}
+
+.close-icon:before {
+    transform: rotate(45deg);
+}
+
+.close-icon:after {
+    transform: rotate(-45deg);
+}
+
+/* Limpar qualquer conteúdo anterior nos pseudo-elementos */
+.close-icon:before, .close-icon:after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 2px;
+    background-color: white;
+    top: 9px; /* Posição fixa para centralizar */
+    left: 0;
+}
+
+.close-icon:before {
+    transform: rotate(45deg);
+}
+
+.close-icon:after {
+    transform: rotate(-45deg);
+}
+      
+/* Loading Indicator */
+#loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+}
+
+#loading.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 5px solid #3498db;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Current lesson info */
+#current-lesson {
+    text-align: center;
+    color: #f9fff2;
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* ==========
+// Containers
+// ========== */
+.main-container {
+    background-image: linear-gradient(-135deg, #171627, #111d4a, #171627, #111d4a);
+    background-color: #171627;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.1);
+    border: 3px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    padding: 10px;
+    display: flex; /* Make main-container a flex container */
+    flex-direction: column; /* Stack children vertically */
+    gap: 5px; /* MUDANÇA: Reduzido de 10px para 5px */
+    justify-content: flex-start;
+    align-items: center; 
+    animation: fadeInScale 1s ease-out;
+}
+
+.title-container {
+    text-align: center;
+}
+
+.content-row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center; /* ← MUDANÇA: centraliza verticalmente */
+    justify-content: center; /* ← ADICIONE: centraliza horizontalmente */
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    min-height: 180px; /* ← ADICIONE: altura mínima para melhor centralização */
+}
+
+/* Ajustes para o container do vídeo */
+.content-row .video-container {
+    flex: 1 1 60%;
+    min-width: 0;
+    max-width: 70%;
+    display: flex; /* ← ADICIONE: torna flexível */
+    align-items: center; /* ← ADICIONE: centraliza conteúdo verticalmente */
+    justify-content: center; /* ← ADICIONE: centraliza conteúdo horizontalmente */
+}
+
+/* Ajustes para os botões */
+.content-row #buttons {
+    flex: 1 1 40%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center; /* ← MUDANÇA: centraliza botões horizontalmente */
+    justify-content: center; /* ← ADICIONE: centraliza botões verticalmente */
+    min-width: 0;
+    max-width: 40%;
+    padding: 0; /* ← MUDANÇA: remove padding-top */
+}
+
+.video-container {
+    width: 100%;
+    aspect-ratio: 16/9;
+    position: relative;
+    background-color: #000;
+    border: 2px solid green;
+}
+
+/* Opcional: Para garantir que os botões tenham largura consistente */
+.content-row #buttons button {
+    width: 100%;
+    max-width: 200px; /* ← ADICIONE: largura máxima para os botões */
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+.phrase-container {
+	font-size: 24px;
+    width: 95%;
+	min-height: 60px;
+	border: 1px dashed #a5b68f;
+	padding: 10px;
+	border-radius: 5px;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	word-break: break-word;
+	background-color: #f9fff2;
+	color: #333;
+	box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.word-container {
+	flex-wrap: wrap;
+    width: 95%;
+    border: 2px solid green;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.word-card {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.4em;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    user-select: none; /* Impede seleção de texto */
+}
+
+wrong-word-card.error {
+  animation: shake 0.4s ease-in-out;
+  background-color: #dc3545; /* Vermelho */
+}
+
+.players-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%; /* ← MUDANÇA: garante que não exceda o container pai */
+    max-width: 100%; /* ← ADICIONE: força limitação */
+    margin: 0 auto;     /* Center it horizontally */
+    /*border: 2px solid green; somente para organizar elementos*/
+}
+
+.player-container {   
+	display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    /* border: 2px solid green; somente para organizar elementos */
+}
+
+.player-container,
+.title-container {
+    flex: 1; /* Ocupa partes iguais */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ← Centraliza horizontalmente */
+}
+
+.player-content {
+    position: relative;
+    width: 70px;
+    height: 70px;
+	background: linear-gradient(-135deg, #000000, #3b0047, #660000, #000000);
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: translateY(calc((85px - 70px) / 2));
+    /*z-index: ;*/
+}
+
+.clock-face {
+    position: absolute;
+    width: 85px;
+    height: 85px;
+    background: linear-gradient(135deg, var(--blue-gradient-start), var(--blue-gradient-end));
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    align-items: flex-start;
+    transition: background 0.7s ease-in-out;
+}
+
+/* Onde a magia do preenchimento circular acontece (sempre cinza) */
+.clock-face::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    /* A cor de preenchimento SEMPRE será cinza */
+    background: conic-gradient(
+        var(--grey-gradient-start) calc(var(--progress) * 1%),
+        var(--grey-gradient-end) calc(var(--progress) * 1% + 1%),
+        transparent calc(var(--progress) * 1% + 1%)
+    );
+    transform: rotate(-0deg);
+    transform-origin: center;
+    transition: background 0.1s linear; /* Transição suave para o preenchimento */
+}
+
+/* Estilo para quando o tempo estiver nos 30% finais (ativado pelo JavaScript) */
+.clock-face.time-almost-up {
+    /* O fundo do clock-face agora piscará com esta animação */
+    animation: blink-red-to-orange 1s infinite alternate;
+}
+
+/* Animação para o piscar de vermelho degradê para laranja degradê NO FUNDO DO CLOCK-FACE */
+@keyframes blink-red-to-orange {
+    0%, 100% {
+        background: linear-gradient(135deg, var(--red-gradient-start), var(--red-gradient-end));
+    }
+    50% {
+        background: linear-gradient(135deg, var(--orange-gradient-start), var(--orange-gradient-end));
+    }
+}
+
+.player-content h6 {
+    margin: 0; /* Remove default margins from h6 and p for tighter control */
+    margin-bottom: 0.4em;
+    padding-top: 0.4em;
+    line-height: 1.6em; /* Adjust line height if needed */
+    font-size: 0.7em; /* Adjust font size if too large */
+}
+    </style>
+</head>
+<body>
+<div class="main-container"> 
+    
+    <div class="players-container">
+    
+        <div class="player-container">
+            <div class="clock-face" id="clock-face1"></div>
+            <div class="player-content">
+				<h6 class="score" id="scorePlayer1">0</h6>
+				<h6>Jogador 1</h6>
+            </div>
+        </div>
+        
+       <div class="title-container">
+            <h3>Phrasecraft</h3>
+            <!-- Menu Button -->
+            <button id="menu-button">
+                Lições
+            </button>
+        </div>
+		
+
+        <div class="player-container">
+            <div class="clock-face" id="clock-face2"></div>
+            <div class="player-content">
+				<h6 class="score" id="scorePlayer2">0</h6>
+				<h6>Jogador 2</h6>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content-row"> 
+        <div class="video-container"></div>
+        
+        <div id="buttons">
+            <button id="repeat" style="background: linear-gradient(to bottom, #ffc078 0%, #ffa94d 50%, #e59442 100%);">Tocar Trecho</button>
+            <button id="readPhrase" style="background: linear-gradient(to bottom, #78c0ff 0%, #5babf0 50%, #4d98e5 100%);">Voz Sintetica</button>
+            <button id="giveUp" style="background: linear-gradient(to bottom, #ff7878 0%, #ff6666 50%, #e55c5c 100%);">Desistir</button>
+        </div>
+    </div>
+    
+    <div class="phrase-container">
+    </div>
+    
+    <div class="word-container">
+    </div>
+    
+    <!-- Menu Overlay -->
+    <div id="menu-overlay">
+        <button class="close-button">
+            <div class="close-icon"></div>
+        </button>
+        <div id="menu-items">
+            <h2 class="menu-title">Lista de Lições</h2>
+            <!-- Dynamic lesson buttons will be inserted here -->
+        </div>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
+    
+</div>
+
+<script>
+// Exemplo de JavaScript para demonstrar funcionalidade
+document.addEventListener('DOMContentLoaded', function() {
+    // Funcionalidade do menu
+    const menuButton = document.getElementById('menu-button');
+    const menuOverlay = document.getElementById('menu-overlay');
+    const closeButton = document.querySelector('.close-button');
+    
+    menuButton.addEventListener('click', function() {
+        menuOverlay.classList.add('active');
+    });
+    
+    closeButton.addEventListener('click', function() {
+        menuOverlay.classList.remove('active');
+    });
+    
+    // Fechar menu clicando fora
+    menuOverlay.addEventListener('click', function(e) {
+        if (e.target === menuOverlay) {
+            menuOverlay.classList.remove('active');
+        }
+    });
+    
+    // Exemplo de progresso do clock
+    let progress = 0;
+    const clockFace1 = document.getElementById('clock-face1');
+    const clockFace2 = document.getElementById('clock-face2');
+    
+    function updateClock() {
+        progress += 1;
+        if (progress > 100) progress = 0;
+        
+        // Atualizar progresso
+        document.documentElement.style.setProperty('--progress', progress);
+        
+        // Adicionar classe de alerta quando próximo do fim
+        if (progress > 70) {
+            clockFace1.classList.add('time-almost-up');
+            clockFace2.classList.add('time-almost-up');
+        } else {
+            clockFace1.classList.remove('time-almost-up');
+            clockFace2.classList.remove('time-almost-up');
+        }
+    }
+    
+    // Simular progresso do clock
+    setInterval(updateClock, 100);
+});
+</script>
+</body>
+</html>

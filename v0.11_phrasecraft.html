@@ -474,6 +474,7 @@
         }
 
         .video-container {
+    		position: relative;
             width: 100%;
             aspect-ratio: 16/9;
             position: relative;
@@ -493,27 +494,25 @@
             cursor: pointer;
         }
 
-        #subtitle-content {
-            margin-top: 20px;
-            padding: 25px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-            min-height: 30px;
-            text-align: left;
-            font-size: 1.1em;
-            color: #555;
-            transition: opacity 0.5s ease-in-out; /* Transição para o efeito de "sumir" */
-            line-height: 1.6;
-        }
-
-        #subtitle-content.hidden {
-            opacity: 0; /* Torna o conteúdo invisível */
-            max-height: 0; /* Colapsa o espaço ocupado */
-            overflow: hidden;
-            padding: 0 25px; /* Remove padding quando oculto */
-            border: none; /* Remove a borda quando oculto */
-        }
+		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
+		#subtitle-content {
+		    position: absolute; /* Essencial para posicionar sobre o vídeo */
+		    bottom: 0;          /* Alinha na parte inferior do vídeo */
+		    left: 0;            /* Alinha à esquerda */
+		    width: 100%;        /* Ocupa toda a largura do vídeo */
+		    background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente para leitura */
+		    color: white;       /* Cor do texto da legenda */
+		    padding: 10px;      /* Espaçamento interno */
+		    text-align: center; /* Centraliza o texto */
+		    font-size: 1.2em;   /* Tamanho da fonte */
+		    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
+		    z-index: 10;        /* Garante que fique acima do vídeo */
+		}
+		
+		/* Classe para ocultar o conteúdo da legenda */
+		#subtitle-content.hidden {
+		    display: none;
+		}
 
         p {
             margin: 10px 0;
@@ -738,16 +737,12 @@
             <div class="video-container">
                 <video id="custom-video" controls style="width: 100%; height: 100%;">
                 </video>
-                                
-                <div class="subtitle-container">
-
-                    <div id="subtitle-content">
-                        <p>Este é um exemplo de texto de legenda que ficará visível quando o switch estiver ligado.</p>
-                        <p>Você pode imaginar isso como o texto de uma legenda de vídeo aparecendo aqui em tempo real.</p>
-                        <p>Quando o switch for desativado, este conteúdo será ocultado.</p>
-                    </div>
-                  
-            	</div>
+        
+                <div id="subtitle-content" class="hidden"> 
+                    <p>Este é um exemplo de texto de legenda que ficará visível quando o switch estiver ligado.</p>
+                    <p>Você pode imaginar isso como o texto de uma legenda de vídeo aparecendo aqui em tempo real.</p>
+                    <p>Quando o switch for desativado, este conteúdo será ocultado.</p>
+                </div>
                 
             </div>
 
@@ -864,39 +859,7 @@
             atualizarPlacar();
             document.getElementById('avancar').style.display = 'none';
         }
-		        
-        // Função para controlar o switch de legendas
-        function switchSubitle, () => {
-            const subtitleSwitch = document.getElementById('subtitleSwitch');
-            const switchLabel = document.getElementById('switchLabel');
-            const subtitleContent = document.getElementById('subtitle-content');
 
-            // Estado inicial: Legendas desligadas
-            let subtitlesOn = false;
-
-            // Função para atualizar a UI com base no estado
-            function updateUI() {
-                if (subtitlesOn) {
-                    subtitleSwitch.classList.add('active');
-                    switchLabel.textContent = 'Legendas:';
-                    subtitleContent.classList.remove('hidden');
-                } else {
-                    subtitleSwitch.classList.remove('active');
-                    switchLabel.textContent = 'Legendas:';
-                    subtitleContent.classList.add('hidden');
-                }
-            }
-
-            // Adiciona o evento de clique ao switch
-            subtitleSwitch.addEventListener('click', () => {
-                subtitlesOn = !subtitlesOn; // Inverte o estado
-                updateUI(); // Atualiza a interface
-            });
-
-            // Inicializa a UI no carregamento da página
-            updateUI();
-        });
-        
         // Função para carregar uma lição
         function loadLesson(lessonIndex) {
             const lesson = lessons[lessonIndex];
@@ -1311,7 +1274,6 @@
         // *** Inicializar a aplicação *** //
         function init() {
             initializeMenuButtons();
-            switchSubitle, ();
 
             // Initialize clocks
             player1Clock = createClock('clock-face1');

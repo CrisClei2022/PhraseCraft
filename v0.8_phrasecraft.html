@@ -97,6 +97,7 @@ button:active {
 }
 
 #menu-button {
+    margin-top: -5%;
     background: transparent;
     text-decoration: none;
     color: #14fff1;
@@ -113,9 +114,11 @@ button:active {
     transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; /* Added box-shadow transition too */
     
     font-family: 'Audiowide', sans-serif; /* Apply the font */
-    letter-spacing: 0.05em; /* Optional: adds a slight space between letters for a techy look */
+    font-size: 0.65em;
+    letter-spacing: 0.2em; /* Optional: adds a slight space between letters for a techy look */
     text-transform: uppercase; /* Optional: makes text uppercase, common in futuristic UIs */
 }
+
 #menu-button:hover {
     box-shadow: 
         0px 0px 16px rgba(0, 0, 0, 0.6), /* Existing outer shadow */
@@ -127,10 +130,10 @@ button:active {
 
 #menu-button:active {
     box-shadow: 
-        0px 0px 8px rgba(0, 0, 0, 0.8), /* Make outer shadow darker/more intense when pressed */
-        inset 0px 0px 3px rgba(0, 204, 255, 0.9), /* More prominent inner glow when pressed */
-        inset 0px 0px 5px rgba(0, 220, 255, 0.7); /* Second layer of inner glow for depth */
-        /* You can adjust or remove the additional inset shadows here for a different press look */
+        0px 0px 8px rgba(0, 0, 0, 0.8), /* outer shadow darker/more intense when pressed */
+        inset 0px 0px 3px rgba(0, 204, 255, 0.9), /* inner glow when pressed */
+        inset 0px 0px 5px rgba(0, 220, 255, 0.7); /* inner glow for depth */
+        /* adjust or remove the additional inset shadows for a different press look */
     
     transform: translateY(2px); /* Moves down when clicked */
     background-color: transparent; /* Keep background transparent */
@@ -349,15 +352,17 @@ button:active {
 
 .title-container {
     text-align: center;
+    /*border: solid 1px green;*/
 }
 
 .content-row {
     display: flex;
     flex-direction: row;
+    margin-top: 1%;
     gap: 10px;
     align-items: center; /* ← MUDANÇA: centraliza verticalmente */
     justify-content: center; /* ← ADICIONE: centraliza horizontalmente */
-    width: 100%;
+    width: 96%;
     flex-wrap: nowrap;
     overflow: hidden;
     min-height: 180px; /* ← ADICIONE: altura mínima para melhor centralização */
@@ -547,7 +552,23 @@ wrong-word-card.error {
     </style>
 </head>
 <body>
-<div class="main-container"> 
+<div class="main-container">
+
+    <!-- Menu Overlay -->
+    <div id="menu-overlay">
+        <button class="close-button">
+            <div class="close-icon"></div>
+        </button>
+        <div id="menu-items">
+            <h2 class="menu-title">Lista de Lições</h2>
+            <!-- Dynamic lesson buttons will be inserted here -->
+        </div>
+    </div>
+    
+    <!-- Loading Indicator -->
+    <div id="loading">
+        <div class="spinner"></div>
+    </div>
     
     <div class="players-container">
     
@@ -559,15 +580,14 @@ wrong-word-card.error {
             </div>
         </div>
         
-       <div class="title-container">
-            <h3>Phrasecraft</h3>
-            <!-- Menu Button -->
-            <button id="menu-button">
-                Lições
-            </button>
-        </div>
+     	<div class="title-container">
+     	     <h3>Phrasecraft</h3>
+     	     <!-- Menu Button -->
+     	     <button id="menu-button">
+     	         Lições
+     	     </button>
+     	</div>
 		
-
         <div class="player-container">
             <div class="clock-face" id="clock-face2"></div>
             <div class="player-content">
@@ -591,22 +611,6 @@ wrong-word-card.error {
     </div>
     
     <div class="word-container">
-    </div>
-    
-    <!-- Menu Overlay -->
-    <div id="menu-overlay">
-        <button class="close-button">
-            <div class="close-icon"></div>
-        </button>
-        <div id="menu-items">
-            <h2 class="menu-title">Lista de Lições</h2>
-            <!-- Dynamic lesson buttons will be inserted here -->
-        </div>
-    </div>
-    
-    <!-- Loading Indicator -->
-    <div id="loading">
-        <div class="spinner"></div>
     </div>
     
 </div>

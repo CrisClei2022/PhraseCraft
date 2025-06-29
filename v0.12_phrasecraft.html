@@ -73,31 +73,8 @@
             transform: translateY(1px);
         }
         
-        /* Novo container para o word-container e o botão Enviar */
-        .word-button-wrapper {
-            width: 95%; /* Mesma largura dos outros containers principais */
-            display: flex;
-            flex-direction: column; /* Empilha os itens verticalmente */
-            align-items: center; /* Centraliza os itens horizontalmente */
-            gap: 15px; /* Espaçamento entre o word-container e o botão */
-            margin-top: 10px; /* Espaçamento acima deste bloco, se necessário */
-        }
-
-        /* Ajuste para o word-container dentro do novo wrapper */
-        .word-button-wrapper .word-container {
-            width: 100%; /* Ocupa a largura total do wrapper */
-            /* Remova qualquer margin-top ou margin-bottom que ele possa ter diretamente */
-        }
-
-        /* Ajuste para o botão 'avancar' dentro do novo wrapper */
-        .word-button-wrapper #avancar {
-            width: auto; /* Permite que o botão se ajuste ao conteúdo */
-            max-width: 200px; /* Opcional: limita a largura máxima do botão */
-            /* Remova qualquer margin-top que ele possa ter diretamente, pois o gap do wrapper já cuida disso */
-        }
-
         #avancar {
-            background: linear-gradient(to bottom, #42a5f5 0%, #2196F3 50%, #0b7dda 100%);
+            background: linear-gradient(to bottom, #66bb6a 0%, #43a047 50%, #2e7d32 100%);
             font-weight: bold;
             padding: 12px 20px;
             font-size: 16px;
@@ -578,11 +555,11 @@
         .palavra { /* Renamed from .word-card for consistency with JS */
             background-color: #007bff;
             color: white;
-            padding: 10px 20px;
+            padding: 5px 10px;
             margin: 5px; /* Added margin for spacing between words */
             border-radius: 6px;
             cursor: pointer;
-            font-size: 1.4em;
+            font-size: 0.9em;
             font-weight: bold;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             transition: transform 0.2s ease, background-color 0.2s ease;
@@ -770,8 +747,8 @@
 
             <div id="buttons">
                 <button id="repetir" style="background: linear-gradient(to bottom, #ffc078 0%, #ffa94d 50%, #e59442 100%);">Tocar Trecho</button>
-                <button id="lerFrase" style="background: linear-gradient(to bottom, #78c0ff 0%, #5babf0 50%, #4d98e5 100%);">Dica: x1</button>
-                <button id="desistir" style="background: linear-gradient(to bottom, #ff7878 0%, #ff6666 50%, #e55c5c 100%);">Passar a vez: x2</button>
+                <button id="lerFrase" style="background: linear-gradient(to bottom, #78c0ff 0%, #5babf0 50%, #4d98e5 100%);">Tocar Lento</button>
+                <button id="desistir" style="background: linear-gradient(to bottom, #ff7878 0%, #ff6666 50%, #e55c5c 100%);">Passar</button>
              </div>
         </div>
 

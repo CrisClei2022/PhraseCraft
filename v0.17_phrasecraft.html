@@ -721,7 +721,7 @@
 
     </div>
 
-    <script>
+<script>
 // Lições disponíveis (nome do arquivo SRT e URL do vídeo)
 const lessons = [
     {
@@ -759,10 +759,10 @@ let audioPlaying = false;
 let currentLessonName = "";
 let player1Clock; // Global variable for player 1's clock
 let player2Clock; // Global variable for player 2's clock
-let mostrarTraducao = false;
-let palavraSelecionadaParaEnvio = null; // Armazena a palavra selecionada
-let elementoSelecionadoParaEnvio = null; // Armazena o elemento DOM da palavra selecionada
-	    
+let mostrarTraducao = false; // NOVA VARIÁVEL GLOBAL
+let palavraSelecionadaParaEnvio = null; // NOVO: Armazena a palavra selecionada
+let elementoSelecionadoParaEnvio = null; // NOVO: Armazena o elemento DOM da palavra selecionada
+
 // Função para gerar o URL do CDN do jsDelivr para os arquivos SRT
 function getSrtCdnUrl(filename) {
     // URL base do jsDelivr para o seu repositório
@@ -993,6 +993,8 @@ function criarPalavras() {
     let palavrasDiv = document.getElementById('palavras');
     palavrasDiv.innerHTML = '';
     palavraElementos = {};
+    palavraSelecionadaParaEnvio = null; // Reseta a palavra selecionada
+    elementoSelecionadoParaEnvio = null; // Reseta o elemento selecionado
 
     if (!palavrasEmbaralhadas || palavrasEmbaralhadas.length === 0) return;
 
@@ -1025,23 +1027,24 @@ function clicarPalavra(palavra, elemento) {
 
     speechSynthesis.speak(utterance);
 
-    if (elemento.classList.contains('acertada') || elemento.classList.contains('selecionada')) {
-        return;
+    // NOVO: Apenas seleciona a palavra, não a move para a frase imediatamente
+    if (elemento.classList.contains('acertada')) {
+        return; // Palavra já foi usada
     }
-    
+
     // Remove o destaque de qualquer palavra que já estava selecionada
     const palavraSelecionadaAnteriormente = document.querySelector('.palavra.selecionada');
     if (palavraSelecionadaAnteriormente) {
         palavraSelecionadaAnteriormente.classList.remove('selecionada');
     }
-    
+
     // Adiciona a classe 'selecionada' à palavra clicada
     elemento.classList.add('selecionada');
-    
-    // Armazena a palavra selecionada para validação posterior
-    let palavraSelecionadaParaEnvio = palavra;
-    let elementoSelecionadoParaEnvio = elemento;
-    
+
+    // Armazena a palavra e o elemento selecionado nas variáveis globais
+    palavraSelecionadaParaEnvio = palavra;
+    elementoSelecionadoParaEnvio = elemento;
+
     // Mostra o botão "Enviar" após a seleção
     document.getElementById('avancar').style.display = 'inline-block';
 }
@@ -1144,6 +1147,8 @@ function atualizarFrase() {
     }
 }
 
+// REMOVIDA: A função verificarFrase() foi removida e sua lógica movida para o botão "avancar".
+
 // Função para ler a frase atual usando o sintetizador de voz
 function lerFraseAtual() {
     if (!fraseAtual) return;
@@ -1217,7 +1222,7 @@ function initializeMenuButtons() {
     });
 }
 
-// Adicionar event listeners
+// --- NOVO: Adicionar event listeners ---
 document.getElementById('avancar').onclick = function() {
     // 1. Pega a palavra que foi selecionada
     const palavraSelecionada = document.querySelector('.palavra.selecionada');
@@ -1227,7 +1232,7 @@ document.getElementById('avancar').onclick = function() {
 
     const textoPalavra = palavraSelecionada.innerText;
     const fraseSplit = fraseAtual.texto.split(' ');
-
+    
     // 2. Valida se a palavra selecionada é a próxima correta
     if (fraseSplit[palavrasClicadas.length] === textoPalavra) {
         // Palavra está correta!
@@ -1240,8 +1245,13 @@ document.getElementById('avancar').onclick = function() {
         document.getElementById('avancar').style.display = 'none';
 
         // 3. Verifica se a frase está completa para avançar automaticamente
-        if (palavrasClicadas.length === fraseSplit.length) {
-            // Frase completa!
+        const isFraseCompleta = palavrasClicadas.length === fraseSplit.length;
+
+        if (isFraseCompleta) {
+            // NOVO: Mostra o indicador de carregamento IMEDIATAMENTE antes do delay
+            showLoading(true);
+
+            // Atualiza o progresso e o placar
             progresso++;
             acertos++;
             atualizarProgresso();
@@ -1268,6 +1278,9 @@ document.getElementById('avancar').onclick = function() {
                 mostrarTraducao = false;
                 atualizarFrase();
                 reproduzirTrechoAtual();
+
+                // NOVO: Esconde o indicador de carregamento
+                showLoading(false);
             }, 1500); // 1.5 segundo de delay para o usuário ver a frase completa
         }
     } else {
@@ -1279,6 +1292,7 @@ document.getElementById('avancar').onclick = function() {
     }
 };
 
+// --- NOVO: Lógica do botão "Desistir" (Passar) ---
 document.getElementById('desistir').onclick = function() {
     if (!fraseAtual) return;
 
@@ -1314,7 +1328,11 @@ document.getElementById('desistir').onclick = function() {
         document.getElementById('avancar').style.display = 'none';
 
         // Verifica se a frase está completa para avançar automaticamente
-        if (palavrasClicadas.length === fraseSplit.length) {
+        const isFraseCompleta = palavrasClicadas.length === fraseSplit.length;
+        if (isFraseCompleta) {
+            // NOVO: Mostra o indicador de carregamento IMEDIATAMENTE
+            showLoading(true);
+
             // Frase completa! Avança para a próxima frase
             setTimeout(() => {
                 indiceFrase++;
@@ -1335,7 +1353,10 @@ document.getElementById('desistir').onclick = function() {
                 mostrarTraducao = false;
                 atualizarFrase();
                 reproduzirTrechoAtual();
-            }, 1500); // 1.5 segundo de delay
+
+                // NOVO: Esconde o indicador de carregamento
+                showLoading(false);
+            }, 1500);
         }
     }
 };
@@ -1551,6 +1572,6 @@ function verificarProgressoLicao(lessonName) {
 
 // Inicializar a aplicação quando o DOM estiver carregado
 document.addEventListener('DOMContentLoaded', init);
-    </script>
+</script>
 </body>
 </html>

@@ -759,8 +759,10 @@ let audioPlaying = false;
 let currentLessonName = "";
 let player1Clock; // Global variable for player 1's clock
 let player2Clock; // Global variable for player 2's clock
-let mostrarTraducao = false; // NOVA VARIÁVEL GLOBAL
-
+let mostrarTraducao = false;
+let palavraSelecionadaParaEnvio = null; // Armazena a palavra selecionada
+let elementoSelecionadoParaEnvio = null; // Armazena o elemento DOM da palavra selecionada
+	    
 // Função para gerar o URL do CDN do jsDelivr para os arquivos SRT
 function getSrtCdnUrl(filename) {
     // URL base do jsDelivr para o seu repositório
@@ -1280,24 +1282,62 @@ document.getElementById('avancar').onclick = function() {
 document.getElementById('desistir').onclick = function() {
     if (!fraseAtual) return;
 
-    // Show the correct phrase
-    palavrasClicadas = fraseAtual.texto.split(' ');
-    atualizarFrase();
+    const fraseSplit = fraseAtual.texto.split(' ');
+    const palavraCorretaAtual = fraseSplit[palavrasClicadas.length];
 
-    // Highlight all words as 'acertada' when giving up
-    Object.keys(palavraElementos).forEach(palavra => {
-        if (fraseAtual.texto.split(' ').includes(palavra)) {
-            palavraElementos[palavra].classList.add('acertada');
+    // Se houver uma palavra correta para revelar
+    if (palavraCorretaAtual) {
+        // Remove o destaque de qualquer palavra selecionada
+        const palavraSelecionadaAnteriormente = document.querySelector('.palavra.selecionada');
+        if (palavraSelecionadaAnteriormente) {
+            palavraSelecionadaAnteriormente.classList.remove('selecionada');
         }
-    });
 
-    if (!fraseAcertada) {
-        progresso++; // Still count as progress, but not as an "acerto"
+        // Adiciona a palavra correta à frase
+        palavrasClicadas.push(palavraCorretaAtual);
+
+        // Encontra o elemento DOM da palavra correta e a marca como acertada
+        const elementoCorreto = palavraElementos[palavraCorretaAtual];
+        if (elementoCorreto) {
+            elementoCorreto.classList.add('acertada');
+        }
+
+        // Não conta como acerto, mas avança o progresso
+        progresso++;
         atualizarProgresso();
-    }
-    salvarProgresso(); // Save progress after giving up
+        salvarProgresso();
 
-    document.getElementById('avancar').style.display = 'inline-block';
+        // Atualiza a visualização da frase
+        atualizarFrase();
+
+        // Oculta o botão "Enviar"
+        document.getElementById('avancar').style.display = 'none';
+
+        // Verifica se a frase está completa para avançar automaticamente
+        if (palavrasClicadas.length === fraseSplit.length) {
+            // Frase completa! Avança para a próxima frase
+            setTimeout(() => {
+                indiceFrase++;
+                if (indiceFrase >= frases.length) {
+                    alert("Parabéns! Você completou todas as frases!");
+                    indiceFrase = 0;
+                    acertos = 0;
+                    progresso = 0;
+                    salvarProgresso();
+                    atualizarPlacar();
+                    atualizarProgresso();
+                }
+                fraseAtual = frases[indiceFrase];
+                palavrasEmbaralhadas = embaralharPalavras(fraseAtual.texto);
+                palavrasClicadas = [];
+                fraseAcertada = false;
+                criarPalavras();
+                mostrarTraducao = false;
+                atualizarFrase();
+                reproduzirTrechoAtual();
+            }, 1500); // 1.5 segundo de delay
+        }
+    }
 };
 
 document.getElementById('repetir').onclick = function() {

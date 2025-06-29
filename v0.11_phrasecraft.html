@@ -72,13 +72,37 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
             transform: translateY(1px);
         }
+        
+        /* Novo container para o word-container e o botão Enviar */
+        .word-button-wrapper {
+            width: 95%; /* Mesma largura dos outros containers principais */
+            display: flex;
+            flex-direction: column; /* Empilha os itens verticalmente */
+            align-items: center; /* Centraliza os itens horizontalmente */
+            gap: 15px; /* Espaçamento entre o word-container e o botão */
+            margin-top: 10px; /* Espaçamento acima deste bloco, se necessário */
+        }
+
+        /* Ajuste para o word-container dentro do novo wrapper */
+        .word-button-wrapper .word-container {
+            width: 100%; /* Ocupa a largura total do wrapper */
+            /* Remova qualquer margin-top ou margin-bottom que ele possa ter diretamente */
+        }
+
+        /* Ajuste para o botão 'avancar' dentro do novo wrapper */
+        .word-button-wrapper #avancar {
+            width: auto; /* Permite que o botão se ajuste ao conteúdo */
+            max-width: 200px; /* Opcional: limita a largura máxima do botão */
+            /* Remova qualquer margin-top que ele possa ter diretamente, pois o gap do wrapper já cuida disso */
+        }
 
         #avancar {
             background: linear-gradient(to bottom, #42a5f5 0%, #2196F3 50%, #0b7dda 100%);
             font-weight: bold;
             padding: 12px 20px;
             font-size: 16px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);            
+            margin-top: 20px;
         }
 
         #avancar:hover {
@@ -748,15 +772,19 @@
                 <button id="repetir" style="background: linear-gradient(to bottom, #ffc078 0%, #ffa94d 50%, #e59442 100%);">Tocar Trecho</button>
                 <button id="lerFrase" style="background: linear-gradient(to bottom, #78c0ff 0%, #5babf0 50%, #4d98e5 100%);">Dica: x1</button>
                 <button id="desistir" style="background: linear-gradient(to bottom, #ff7878 0%, #ff6666 50%, #e55c5c 100%);">Passar a vez: x2</button>
-                <button id="avancar" style="display: none;">Avançar</button> </div>
+             </div>
         </div>
 
         <div class="phrase-container" id="frase">
             </div>
 
-        <div class="word-container" id="palavras">
+        <div class="word-button-wrapper">
+            <div class="word-container" id="palavras">
             </div>
-
+		
+        <button id="avancar" style="display: none;">Enviar</button>
+          </div>
+        
         <div id="progresso" style="margin-top: 10px; font-size: 1.1em;">Progresso: 0 de 0</div>
         <div id="placar" style="margin-top: 5px; font-size: 1.1em;">Acertos: 0</div>
 
@@ -772,7 +800,7 @@
             },
             {
                 name: "Melanie Martinez - The Contortionist",
-                srtFile: "Melanie_Martinez-The_Contortionist.srt",
+                srtFile: "Melanie Martinez - The Contortionist.srt",
                 videoUrl: "https://files.catbox.moe/vxoldg.mp4"
             },
             {
@@ -805,7 +833,7 @@
         // Função para gerar o URL do CDN do jsDelivr para os arquivos SRT
         function getSrtCdnUrl(filename) {
             // URL base do jsDelivr para o seu repositório
-            const baseUrl = "https://raw.githubusercontent.com/CrisClei2022/srt/main/";
+            const baseUrl = "https://cdn.jsdelivr.net/gh/CrisClei2022/listeningpro@main/";
             // Retorna a URL completa
             return baseUrl + encodeURIComponent(filename);
         }

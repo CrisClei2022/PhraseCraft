@@ -76,10 +76,9 @@
         #avancar {
             background: linear-gradient(to bottom, #66bb6a 0%, #43a047 50%, #2e7d32 100%);
             font-weight: bold;
-            padding: 12px 20px;
-            font-size: 16px;
+            padding: 10px 15px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);            
-            margin-top: 20px;
+            margin-top: 1%;
         }
 
         #avancar:hover {
@@ -492,16 +491,24 @@
             color: #0056b3; /* A distinct color for correctly placed words */
             font-weight: bold;
         }
+        
+        .word-button-wrapper {
+            width: 100%; /* Ensures the wrapper takes full available width */
+            display: flex; /* Keeping it flex allows for easy centering of its children */
+            flex-direction: column; /* Stack children vertically */
+            align-items: center; /* Center children horizontally */
+            gap: 10px; /* Adjust gap as needed for spacing between word container and button */
+        }
 
         .word-container {
             flex-wrap: wrap;
+            min-height: 60px; /* Match .phrase-container */
             width: 95%;
             border: 2px solid green;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             padding: 10px;
-            min-height: auto; /* Added min-height for visibility */
         }
 
         .palavra { /* Renamed from .word-card for consistency with JS */
@@ -707,14 +714,14 @@
         </div>
 
         <div class="phrase-container" id="frase">
-            </div>
+        </div>
 
         <div class="word-button-wrapper">
-            <div class="word-container" id="palavras">
-            </div>
-		
-        <button id="avancar" style="display: none;">Enviar</button>
-          </div>
+        
+            <div class="word-container" id="palavras"></div> 
+            <button id="avancar">Enviar</button>
+            
+        </div>
         
         <div id="progresso" style="margin-top: 10px; font-size: 0.9em;">Progresso: 0 de 0</div>
 
@@ -724,8 +731,8 @@
 // Lições disponíveis (nome do arquivo SRT e URL do vídeo)
 const lessons = [
     {
-        name: "Lady_Gaga-Scheiße.srt",
-        srtFile: "Lady Gaga - Scheiße.srt",
+        name: "Lady Gaga - Scheiße",
+        srtFile: "Lady_Gaga-Scheiße.srt",
         videoUrl: "https://files.catbox.moe/noor8m.mp4"
     },
     {
@@ -734,8 +741,8 @@ const lessons = [
         videoUrl: "https://files.catbox.moe/vxoldg.mp4"
     },
     {
-        name: "New_West-Those_Eyes.srt",
-        srtFile: "New West - Those Eyes.srt",
+        name: "New West - Those Eyes",
+        srtFile: "New_West-Those_Eyes.srt",
         videoUrl: "https://files.catbox.moe/k7xhth.mp4"
     }
     // Adicione mais lições conforme necessário

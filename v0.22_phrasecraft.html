@@ -1396,18 +1396,17 @@ function createClock(clockFaceId) {
 
     if (!clockFace) {
         console.error(`Clock face with ID '${clockFaceId}' not found.`);
-        return null; // Return null if the element doesn't exist
+        return null;
     }
 
     let currentProgress = 0;
-    const totalTimeMs = 10000; // For example, 10 seconds
-    const updateIntervalMs = 16; // Approximately 60fps
-
+    const totalTimeMs = 10000;
+    const updateIntervalMs = 16;
     const steps = totalTimeMs / updateIntervalMs;
     const progressPerStep = 100 / steps;
 
     let intervalId;
-    let _isActive = false; // Internal flag to track active state
+    let _isActive = false;
 
     function updateClock() {
         if (currentProgress <= 100) {
@@ -1423,10 +1422,9 @@ function createClock(clockFaceId) {
 
             currentProgress += progressPerStep;
         } else {
-            clearInterval(intervalId);
-            clockFace.classList.remove('time-almost-up');
+            // Clock completou, para e chama o switch automaticamente
+            stopClock(true); // true indica que foi por conclusão
             console.log(`Clock '${clockFaceId}' fill complete!`);
-            _isActive = false; // Set to inactive when complete
         }
     }
 
@@ -1434,22 +1432,33 @@ function createClock(clockFaceId) {
         currentProgress = 0;
         clockFace.classList.remove('time-almost-up');
         intervalId = setInterval(updateClock, updateIntervalMs);
-        _isActive = true; // Set to active when started
+        _isActive = true;
     }
 
-    function stopClock() {
+    function stopClock(autoSwitch = false) {
         clearInterval(intervalId);
         clockFace.classList.remove('time-almost-up');
-        currentProgress = 0;
-        clockFace.style.setProperty('--progress', currentProgress);
-        _isActive = false; // Set to inactive when stopped
+        
+        // Se não foi por conclusão, reseta o progresso
+        if (!autoSwitch) {
+            currentProgress = 0;
+            clockFace.style.setProperty('--progress', currentProgress);
+        }
+        
+        _isActive = false;
+        
+        // Se foi por conclusão (tempo acabou), chama o switch automaticamente
+        if (autoSwitch) {
+            setTimeout(() => {
+                switchStoppedClock(clockFaceId);
+            }, 100); // Pequeno delay para garantir que o estado foi atualizado
+        }
     }
 
     function isActive() {
         return _isActive;
     }
 
-    // Return the start, stop, and isActive functions
     return {
         start: startClock,
         stop: stopClock,
@@ -1457,15 +1466,13 @@ function createClock(clockFaceId) {
     };
 }
 
-
-// Função chamada quando um clock termina
-function onClockComplete(completedClockId) {
-    console.log(`Clock ${completedClockId} completed, switching to other player`);
-    
-    if (completedClockId === 'clock-face1') {
+function switchStoppedClock(currentClockId) {
+    if (currentClockId === 'clock-face1') {
         player2Clock.start();
-    } else if (completedClockId === 'clock-face2') {
+        console.log('Clock 1 finished, starting Clock 2');
+    } else if (currentClockId === 'clock-face2') {
         player1Clock.start();
+        console.log('Clock 2 finished, starting Clock 1');
     }
 }
 
@@ -1480,7 +1487,7 @@ function getActiveClockId() {
 }
 
 function switchActiveClock() {
-    const activeClockId = getActiveClockId(); // Use the previously defined function to get the active clock ID
+    const activeClockId = getActiveClockId();
 
     if (activeClockId === 'clock-face1') {
         player1Clock.stop();
@@ -1491,8 +1498,6 @@ function switchActiveClock() {
         player1Clock.start();
         console.log('Switched from Player 2 clock to Player 1 clock.');
     } else {
-        // If neither is active, you might want to decide which one to start by default
-        // For example, start player 1's clock if no one is active
         player1Clock.start();
         console.log('No active clock found, starting Player 1 clock.');
     }
@@ -1619,4 +1624,4 @@ function verificarProgressoLicao(lessonName) {
 document.addEventListener('DOMContentLoaded', init);
 		</script>
 	</body>
-  </html>
+</html>

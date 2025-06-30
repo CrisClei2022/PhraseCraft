@@ -376,18 +376,19 @@
 
 		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
 		#subtitle-content {
-            position: absolute; 
-            width: 95%;        
-            height: 80%;       
-            justify-content: center; /* ← ADICIONE: centraliza verticalmente */
-            background-color: rgba(0, 0, 0, 0.7); /* Leitura semi-transparente */
-            color: white;       /* Cor do texto da legenda */
-            padding: 10px;      /* Espaçamento interno */
-            text-align: center; /* Centraliza o texto */
-            font-size: 1.2em;   /* Tamanho da fonte */
-            box-sizing: border-box; /* padding não aumente o tamanho total */
-            z-index: 10;         /* Garante que fique acima do vídeo */
-		}
+            position: absolute;
+            width: 95%;
+            height: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.0em;
+            box-sizing: border-box;
+            z-index: 10;
+            top: 50%; /* Moves the top edge of the element to the middle of its parent */
+            transform: translateY(-50%); /* Shifts the element up by half of its own height */
+        }
 		
 		/* Classe para ocultar o conteúdo da legenda */
 		#subtitle-content.hidden {

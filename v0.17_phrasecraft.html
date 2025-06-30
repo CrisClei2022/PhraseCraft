@@ -664,7 +664,7 @@
             <div class="player-container">
                 <div class="clock-face" id="clock-face1"></div>
                 <div class="player-content">
-                    <h6 class="score" id="scorePlayer1">0</h6>
+                    <h6 class="score" id="placar">0</h6>
                     <h6>Jogador 1</h6>
                 </div>
             </div>
@@ -677,7 +677,7 @@
             <div class="player-container">
                 <div class="clock-face" id="clock-face2"></div>
                 <div class="player-content">
-                    <h6 class="score" id="scorePlayer2">0</h6>
+                    <h6 class="score" id="placar">0</h6>
                     <h6>Jogador 2</h6>
                 </div>
             </div>
@@ -716,8 +716,7 @@
         <button id="avancar" style="display: none;">Enviar</button>
           </div>
         
-        <div id="progresso" style="margin-top: 10px; font-size: 1.1em;">Progresso: 0 de 0</div>
-        <div id="placar" style="margin-top: 5px; font-size: 1.1em;">Acertos: 0</div>
+        <div id="progresso" style="margin-top: 10px; font-size: 0.9em;">Progresso: 0 de 0</div>
 
     </div>
 
@@ -1175,7 +1174,7 @@ function atualizarProgresso() {
 
 // Função para atualizar o placar
 function atualizarPlacar() {
-    document.getElementById('placar').innerText = `Acertos: ${acertos}`;
+    document.getElementById('placar').innerText = ` ${acertos}`;
 }
 
 // Função para reproduzir o trecho do vídeo atual
@@ -1574,4 +1573,4 @@ function verificarProgressoLicao(lessonName) {
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
-</html>
+	</html>

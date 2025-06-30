@@ -351,17 +351,49 @@
             overflow: hidden;
             min-height: 180px; /* ← ADICIONE: altura mínima para melhor centralização */
         }
-
+        
         /* Ajustes para o container do vídeo */
         .content-row .video-container {
             flex: 1 1 70%;
             min-width: 0;
             max-width: 80%;
-            display: flex; /* ← ADICIONE: torna flexível */
-            align-items: center; /* ← ADICIONE: centraliza conteúdo verticalmente */
-            justify-content: center; /* ← ADICIONE: centraliza conteúdo horizontalmente */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative; /* ADICIONE ISSO: Torna este o contêiner de posicionamento para o filho absoluto */
         }
 
+        /* O container do vídeo onde o player e a legenda ficam */
+        .video-container #custom-video {
+            /* Mantenha suas propriedades de tamanho para o vídeo em si */
+            width: 100%; /* MUDANÇA: Use 100% para preencher o pai */
+            height: auto; /* MUDANÇA: Use auto para manter o aspect ratio original do vídeo */
+            aspect-ratio: 16/9; /* Mantenha isso para garantir a proporção do vídeo */
+            display: block; /* Garante que não haja espaço extra abaixo do vídeo */
+            background-color: #000;
+            border: 2px solid green;
+        }
+
+		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
+		#subtitle-content {
+            position: absolute; 
+            width: 95%;        
+            height: 80%;       
+            justify-content: center; /* ← ADICIONE: centraliza verticalmente */
+            background-color: rgba(0, 0, 0, 0.7); /* Leitura semi-transparente */
+            color: white;       /* Cor do texto da legenda */
+            padding: 10px;      /* Espaçamento interno */
+            text-align: center; /* Centraliza o texto */
+            font-size: 1.2em;   /* Tamanho da fonte */
+            box-sizing: border-box; /* padding não aumente o tamanho total */
+            z-index: 10;         /* Garante que fique acima do vídeo */
+		}
+		
+		/* Classe para ocultar o conteúdo da legenda */
+		#subtitle-content.hidden {
+		    display: none;
+		}
+        
         /* Ajustes para os botões */
         .content-row #buttons {
             flex: 1 1 40%;
@@ -374,16 +406,7 @@
             max-width: 40%;
             padding: 0; /* ← MUDANÇA: remove padding-top */
         }
-
-        .video-container #custom-video {
-    		position: relative;
-            width: 99%;
-            aspect-ratio: 16/9;
-            position: relative;
-            background-color: #000;
-            border: 2px solid green;
-        }
-
+        
         /* Opcional: Para garantir que os botões tenham largura consistente */
         .content-row #buttons button {
             width: 100%;
@@ -395,26 +418,6 @@
             font-weight: bold;
             cursor: pointer;
         }
-
-		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
-		#subtitle-content {
-		    position: absolute; /* Essencial para posicionar sobre o vídeo */
-		    bottom: 0;          /* Alinha na parte inferior do vídeo */
-		    left: 0;            /* Alinha à esquerda */
-		    width: 100%;        /* Ocupa toda a largura do vídeo */
-		    background-color: rgba(0, 0, 0, 0.7); /* Fundo semi-transparente para leitura */
-		    color: white;       /* Cor do texto da legenda */
-		    padding: 10px;      /* Espaçamento interno */
-		    text-align: center; /* Centraliza o texto */
-		    font-size: 1.2em;   /* Tamanho da fonte */
-		    box-sizing: border-box; /* Garante que o padding não aumente a largura total */
-		    z-index: 10;        /* Garante que fique acima do vídeo */
-		}
-		
-		/* Classe para ocultar o conteúdo da legenda */
-		#subtitle-content.hidden {
-		    display: none;
-		}
 
         p {
             margin: 10px 0;

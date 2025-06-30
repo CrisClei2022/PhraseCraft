@@ -837,7 +837,24 @@ async function loadSrtFromUrl(url) {
 
     return srtLoadedSuccessfully; // Retorna true se o SRT foi carregado, false caso contrário.
 }
+	
+// Function to start a random player's clock
+function startRandomPlayerClock() {
+    // Stop both clocks first to ensure only one is running or both are reset
+    if (player1Clock) player1Clock.stop();
+    if (player2Clock) player2Clock.stop();
 
+    // Randomly choose which player's clock to start
+    const randomPlayer = Math.random();
+    if (randomPlayer < 0.5) {
+        if (player1Clock) player1Clock.start();
+        console.log("Player 1's clock started.");
+    } else {
+        if (player2Clock) player2Clock.start();
+        console.log("Player 2's clock started.");
+    }
+}
+	
 // Função para carregar uma lição
 function loadLesson(lessonIndex) {
     const lesson = lessons[lessonIndex];
@@ -857,7 +874,7 @@ function loadLesson(lessonIndex) {
             // Verificar se há progresso salvo para esta lição
             const progressoSalvo = carregarProgresso();
             if (progressoSalvo && progressoSalvo.lessonName === currentLessonName) {
-                const retomar = confirm(`Você tem um progresso salvo nesta lição. Deseja continuar de onde parou? (Frase ${progressoSalvo.fraseIndex + 1})`);
+                const retomar = confirm(`Você tem um progresso salvo nesta lição. Deseja continuar de onde parou? *** ${progressoSalvo.lessonName} | Frase ${progressoSalvo.fraseIndex + 1}***`);
 
                 if (retomar && progressoSalvo.fraseIndex < frases.length) {
                     indiceFrase = progressoSalvo.fraseIndex;
@@ -875,6 +892,7 @@ function loadLesson(lessonIndex) {
                 }
             }
         }
+	startRandomPlayerClock();
     });
 
     // Fechar o menu

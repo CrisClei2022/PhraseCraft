@@ -998,6 +998,7 @@ function clicarPalavra(palavra, elemento) {
         elemento.classList.add('acertada');
         elemento.classList.remove('selecionada');
         atualizarFrase();
+	switchActiveClock();
 
         // Verifica se a palavra ACERTADA AGORA é a PENÚLTIMA da frase
         if (palavrasClicadas.length === fraseSplit.length - 1) {

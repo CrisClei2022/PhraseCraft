@@ -997,8 +997,9 @@ function clicarPalavra(palavra, elemento) {
         palavrasClicadas.push(palavra);
         elemento.classList.add('acertada');
         elemento.classList.remove('selecionada');
-        atualizarFrase();	
-        acertos++;
+	acertos++;
+        atualizarPlacar();
+        atualizarFrase();
 	switchActiveClock();
 
         // Verifica se a palavra ACERTADA AGORA é a PENÚLTIMA da frase
@@ -1028,7 +1029,6 @@ function clicarPalavra(palavra, elemento) {
 
             progresso++;
             atualizarProgresso();
-            atualizarPlacar();
             salvarProgresso();
             
             setTimeout(() => {

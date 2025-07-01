@@ -972,6 +972,9 @@ function criarPalavras() {
 // E em 'criarPalavras', para cada palavraDiv criada: palavrasDisponiveisElementos.push(palavraDiv);
 // Certifique-se de que isso está no seu código.
 
+// Certifique-se de que 'palavrasDisponiveisElementos' está sendo populado corretamente
+// na sua função 'criarPalavras()' para lidar com elementos DOM específicos.
+
 function clicarPalavra(palavra, elemento) {
     if (!fraseAtual) return;
 
@@ -991,6 +994,10 @@ function clicarPalavra(palavra, elemento) {
 
     const fraseSplit = fraseAtual.texto.split(' ');
     const proximaPalavraCorreta = fraseSplit[palavrasClicadas.length];
+    
+    // Calcula o comprimento da frase antes de adicionar a palavra atual
+    const comprimentoFraseAtual = palavrasClicadas.length; 
+    let shouldProcessPhraseCompletion = false; // Flag para controlar o avanço da frase
 
     if (palavra === proximaPalavraCorreta) {
         // Palavra CORRETA!
@@ -998,15 +1005,23 @@ function clicarPalavra(palavra, elemento) {
         elemento.classList.add('acertada');
         elemento.classList.remove('selecionada');
         
-        acertos++; // Incrementa acertos APENAS se a palavra foi clicada pelo usuário
-        atualizarPlacar();
+        // Incrementa acertos APENAS se não for a última palavra da frase.
+        // A última palavra (se auto-completa) ou a única palavra em frase de 1 palavra não pontua.
+        if (comprimentoFraseAtual < fraseSplit.length - 1) { 
+            acertos++;
+            atualizarPlacar();
+        }
+        
         atualizarFrase(); // Atualiza a frase na tela após adicionar a palavra clicada
-        switchActiveClock();
-        let shouldProcessPhraseCompletion = false; // Flag para controlar o avanço da frase
+        
+        // Mantenho o switchActiveClock aqui, conforme seu último código.
+        // Isso significa que a vez é passada a cada acerto.
+        switchActiveClock(); 
 
+        // --- Lógica de Auto-Completação da Última Palavra ---
         // Verifica se a palavra ACERTADA AGORA é a PENÚLTIMA da frase
         // E se a frase tem mais de uma palavra (para ativar a auto-completação)
-        if (palavrasClicadas.length === fraseSplit.length - 1 && fraseSplit.length > 1) {
+        if (comprimentoFraseAtual === fraseSplit.length - 2 && fraseSplit.length > 1) { // A palavra AGORA CLICADA é a penúltima
             const ultimaPalavra = fraseSplit[fraseSplit.length - 1];
             let elementoUltimaPalavraParaAutoEnviar = null;
 
@@ -1019,7 +1034,8 @@ function clicarPalavra(palavra, elemento) {
             }
 
             if (elementoUltimaPalavraParaAutoEnviar) {
-                palavrasClicadas.push(ultimaPalavra); // Adiciona a última palavra à sequência
+                // Adiciona a última palavra à sequência
+                palavrasClicadas.push(ultimaPalavra); 
                 elementoUltimaPalavraParaAutoEnviar.classList.add('acertada'); // Marca visualmente
                 elementoUltimaPalavraParaAutoEnviar.classList.remove('selecionada'); // Limpa seleção
                 atualizarFrase(); // Atualiza a frase com a última palavra auto-completa
@@ -1027,17 +1043,18 @@ function clicarPalavra(palavra, elemento) {
                 // Reproduz o som da última palavra automaticamente
                 const utteranceUltima = new SpeechSynthesisUtterance(ultimaPalavra);
                 utteranceUltima.lang = detectarIdioma(fraseAtual.texto);
-                speechSynthesis.speak(utteranceUltima);                
+                speechSynthesis.speak(utteranceUltima);
+                
                 shouldProcessPhraseCompletion = true; // Define a flag para avançar a frase
             }
         } 
         // Verifica se a frase ficou completa por um clique MANUAL (incluindo frases de 1 palavra)
         // E se a conclusão já não foi disparada pela auto-completação acima
-        else if (palavrasClicadas.length === fraseSplit.length) {
+        else if (palavrasClicadas.length === fraseSplit.length) { // A palavra AGORA CLICADA é a última e completou a frase
             shouldProcessPhraseCompletion = true; // Define a flag para avançar a frase
         }
 
-        // Se a frase deve ser completada, inicia o processo de avanço
+        // --- Lógica de Avanço da Frase (se shouldProcessPhraseCompletion for true) ---
         if (shouldProcessPhraseCompletion) {
             // Primeiro, parar os relógios IMEDIATAMENTE (se ainda estiverem ativos)
             if (player1Clock) player1Clock.stop();
@@ -1045,7 +1062,8 @@ function clicarPalavra(palavra, elemento) {
 
             showLoading(true); // Ativa o loading
 
-            progresso++;
+            // Progresso da frase completa é sempre incrementado aqui
+            progresso++; 
             atualizarProgresso();
             salvarProgresso();
             
@@ -1082,7 +1100,7 @@ function clicarPalavra(palavra, elemento) {
             }, 1500); // Delay para o usuário ver a frase completa e a transição
         }
 
-    } else {
+    } else { // Esta chave fecha o 'if (palavra === proximaPalavraCorreta)' principal
         // Palavra INCORRETA!
         elemento.classList.add('errada');
         setTimeout(() => {
@@ -1092,7 +1110,7 @@ function clicarPalavra(palavra, elemento) {
         // PASSA A VEZ: Se a palavra estiver errada, o relógio do jogador atual para e o outro começa.
         switchActiveClock(); // Este aqui DEVE permanecer
     }
-}
+} // <--- ESTA É A CHAVE DE FECHAMENTO FINAL DA FUNÇÃO cliclPalavra
 	
 // Função para pausar todos os áudios
 function pausarAudios() {
@@ -1272,6 +1290,8 @@ function initializeMenuButtons() {
 document.getElementById('desistir').onclick = function() {
     if (!fraseAtual) return;
 
+    pausarAudios();
+
     const fraseSplit = fraseAtual.texto.split(' ');
     // A palavra correta que esperamos na posição atual da frase
     const palavraCorretaAtual = fraseSplit[palavrasClicadas.length];
@@ -1316,13 +1336,19 @@ document.getElementById('desistir').onclick = function() {
             
             // Verifica se a frase está completa para avançar automaticamente
             const isFraseCompleta = palavrasClicadas.length === fraseSplit.length;
+	    
 
+            const utterance = new SpeechSynthesisUtterance(palavraCorretaAtual);
+            utterance.lang = detectarIdioma(fraseAtual.texto);
+            audioPlaying = true;
+            utterance.onend = () => audioPlaying = false;
+            speechSynthesis.speak(utterance);
             // NEW: Switch clock after "Passar" action
             switchActiveClock();
 		
             if (isFraseCompleta) {
-player1Clock.stop();
-player2Clock.stop();
+	    player1Clock.stop();
+	    player2Clock.stop();
 		    
                 // Mostra o indicador de carregamento imediatamente
                 showLoading(true); 

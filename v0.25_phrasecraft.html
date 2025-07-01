@@ -1013,13 +1013,14 @@ function clicarPalavra(palavra, elemento) {
 
         // Incrementa acertos APENAS se não for a última palavra da frase
         if (comprimentoFraseAtual < fraseSplit.length - 1) {
-            if (activeClockId === 'clock-face1') {
-                acertos1++; // Incrementa o score do Jogador 1
-            } else if (activeClockId === 'clock-face2') {
-                acertos2++; // Incrementa o score do Jogador 2
-            }
-            atualizarPlacares(); // Chama a função para atualizar ambos os placares
-        }
+	    const activeClockId = getActiveClockId(); // Garanta que esta linha esteja aqui, se não estiver globalmente disponível
+	    if (activeClockId === 'clock-face1') {
+	        acertos1++;
+	    } else if (activeClockId === 'clock-face2') { // CORREÇÃO AQUI
+	        acertos2++;
+	    }
+	    atualizarPlacares();
+	}
         
         atualizarFrase();
         

@@ -75,14 +75,14 @@ Contribuições são bem-vindas! Se você tiver sugestões ou quiser colaborar, 
 
 ### Componentes Essenciais para Implementar Notificações Push
 
-* Notificacao Enviada
+# Notificacao Enviada
 * O interesse para o próximo jogador: atraves do interesse o Beams sabe para quem/onde deve enviar a notificacao.
 
-Notificacao Recebida
-quanto toca na notificacao, a pagina carrega ou quando a pagina carrega ela verifica o body da ultima notificacao:
-A chave para isso é o Service Worker e a propriedade data da notificação push.
+# Notificacao Recebida
+*  Quando toca na notificacao, a pagina carrega ou quando a pagina carrega ela verifica o body da ultima notificacao:
+* A chave para isso é o Service Worker e a propriedade data da notificação push.
 
-Exemplo de Função Serverless (revisitado):
+# Exemplo de Função Serverless (revisitado):
 await pusherBeams.publishToInterests(
   [`player-${nextPlayerId}`], // O interesse para o próximo jogador
   {

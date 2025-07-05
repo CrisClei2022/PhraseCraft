@@ -85,7 +85,7 @@ Contribuições são bem-vindas! Se você tiver sugestões ou quiser colaborar, 
 # Exemplo de Função Serverless (revisitado):
 
 
-    ```bash
+
 await pusherBeams.publishToInterests(
   [`player-${nextPlayerId}`], // O interesse para o próximo jogador
   {

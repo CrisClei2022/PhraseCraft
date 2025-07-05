@@ -83,6 +83,8 @@ Contribuições são bem-vindas! Se você tiver sugestões ou quiser colaborar, 
 * A chave para isso é o Service Worker e a propriedade data da notificação push.
 
 # Exemplo de Função Serverless (revisitado):
+
+    ```
 await pusherBeams.publishToInterests(
   [`player-${nextPlayerId}`], // O interesse para o próximo jogador
   {
@@ -103,6 +105,7 @@ await pusherBeams.publishToInterests(
     },
   }
 );
+    ```
 
 * **Pusher Beams (Instância e Configuração)**
     * **O que é:** O serviço principal para enviar notificações push aos navegadores dos jogadores.

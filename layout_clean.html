@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treinamento de Frases</title>
+    <style>
+        body {
+            background-color: #1a1a1a; /* Tema escuro */
+            color: #f0f0f0; /* Cor do texto claro */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .time-bar {
+            flex-grow: 1; /* Ocupa o máximo de espaço possível */
+            height: 10px;
+            background-color: #555;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-right: 15px;
+            position: relative;
+        }
+
+        /* Exemplo de preenchimento da barra de tempo (você controlaria isso com JS) */
+        .time-bar::before {
+            content: '';
+            display: block;
+            width: 50%; /* Exemplo: 50% do tempo decorrido */
+            height: 100%;
+            background-color: #4CAF50; /* Cor de progresso */
+            border-radius: 5px;
+        }
+
+        .player-turn {
+            background-color: #007bff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            white-space: nowrap; /* Evita quebra de linha */
+        }
+
+        .video-section {
+            width: 90%;
+            max-width: 900px; /* Limita a largura do vídeo */
+            margin-top: 20px;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* Proporção 16:9 (para vídeo responsivo) */
+            background-color: #000;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Garante que o vídeo seja totalmente visível */
+            /* Bloqueando controles nativos - alguns navegadores podem ainda mostrar ao interagir */
+            pointer-events: none; /* Desabilita cliques no vídeo */
+        }
+
+        .overlay-buttons {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .icon-button {
+            background-color: rgba(255, 255, 255, 0.2); /* Transparente */
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #f0f0f0;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.5em;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+
+        .menu-icon {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 25px;
+            height: 20px;
+        }
+
+        .menu-icon span {
+            display: block;
+            width: 100%;
+            height: 3px;
+            background-color: #f0f0f0;
+            border-radius: 2px;
+        }
+        /* Estilos básicos para o botão que contém a imagem */
+        .button, img {
+            background-color: transparent; /* Fundo transparente por padrão */
+            border: none; /* Sem borda por padrão */
+            padding: 0; /* Remove padding padrão do botão */
+            cursor: pointer; /* Indica que é clicável */
+            display: inline-flex; /* Permite centralizar a imagem facilmente */
+            justify-content: center; /* Centraliza horizontalmente */
+            align-items: center; /* Centraliza verticalmente */
+            width: 24px;   /* Tamanho padrão do ícone (ajuste conforme necessário) */
+            height: 24px;  /* Tamanho padrão do ícone */
+            display: block; /* Garante que a imagem se comporte como um bloco */
+            filter: invert(100%); /* Opcional: inverte as cores da imagem para ícones escuros em fundo claro */
+            transition: transform 0.2s ease-in-out; /* Adiciona uma transição suave ao hover */
+        }
+
+        .phrase-assembly-area,
+        .scrambled-words-area {
+            width: 90%;
+            max-width: 900px;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-top: 1%;
+            text-align: center;
+        }
+
+        .phrase-display {
+            min-height: 80px;
+            border: 2px dashed #555;
+            border-radius: 5px;
+            margin-top: 1%;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center; /* Centraliza as palavras montadas */
+            gap: 8px;
+            font-size: 1.2em;
+            color: #ddd;
+        }
+
+        .word-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 1%;
+        }
+
+        .word-tile {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: grab; /* Indica que pode ser arrastado (para futura funcionalidade JS) */
+            font-size: 1.1em;
+            transition: background-color 0.2s;
+        }
+
+        .word-tile:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="time-bar"></div>
+        <div class="player-turn">Player 1 Turn</div>
+    </div>
+
+    <div class="video-section">
+        <div class="video-container">
+            <video id="gameVideo" controlsList="nodownload nofullscreen noremoteplayback">
+                <source src="your-video.mp4" type="video/mp4">
+                Seu navegador não suporta a tag de vídeo.
+            </video>
+                <button class="icon-button menu-btn">
+                  <div class="menu-icon">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                  </div>
+                </button>
+            <div class="overlay-buttons">
+                <button class="icon-button play-segment-btn">
+                    <img src='https://cdn-icons-png.flaticon.com/256/686/686472.png'>
+                </button>
+                <button class="icon-button show-subtitle-btn">
+                    <img src='https://cdn-icons-png.flaticon.com/128/8361/8361117.png'>
+                </button>
+                <button class="icon-button play-slow-btn">
+                    🐢
+                </button>
+                <button class="icon-button play-slow-btn">
+                    Passar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="phrase-assembly-area">
+        <div id="assembledPhrase" class="phrase-display"></div>
+    </div>
+
+    <div class="scrambled-words-area">
+        <div id="scrambledWords" class="word-grid">
+            <button class="word-tile">Palavra1</button>
+            <button class="word-tile">Palavra2</button>
+            <button class="word-tile">Palavra3</button>
+            <button class="word-tile">Palavra4</button>
+            <button class="word-tile">Palavra5</button>
+        </div>
+    </div>
+
+    <script>
+        // Exemplo básico de script (para você desenvolver as funcionalidades)
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('gameVideo');
+            const playSegmentBtn = document.querySelector('.play-segment-btn');
+            const showSubtitleBtn = document.querySelector('.show-subtitle-btn');
+            const playSlowBtn = document.querySelector('.play-slow-btn');
+            const assembledPhrase = document.getElementById('assembledPhrase');
+            const scrambledWordsContainer = document.getElementById('scrambledWords');
+
+            // --- Funcionalidades do Vídeo (Exemplo - requer lógica mais complexa) ---
+            if (video) {
+                playSegmentBtn.addEventListener('click', () => {
+                    // Lógica para tocar um trecho específico do vídeo
+                    console.log('Tocar trecho do vídeo');
+                    // Ex: video.currentTime = 10; video.play();
+                });
+
+                showSubtitleBtn.addEventListener('click', () => {
+                    // Lógica para mostrar legenda traduzida
+                    console.log('Mostrar legenda traduzida');
+                    // Você precisaria de um elemento para exibir a legenda e dados de legendas.
+                });
+
+                playSlowBtn.addEventListener('click', () => {
+                    // Lógica para tocar o vídeo devagar
+                    console.log('Tocar trecho devagar');
+                    video.playbackRate = 0.5; // Exemplo: 0.5 para tocar na metade da velocidade
+                    video.play();
+                });
+            }
+
+            // --- Funcionalidades de Montar Frase (Exemplo - requer lógica de drag-and-drop ou clique) ---
+            scrambledWordsContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('word-tile')) {
+                    const word = event.target.textContent;
+                    assembledPhrase.innerHTML += `<span class="assembled-word">${word} </span>`;
+                    event.target.remove(); // Remove a palavra embaralhada clicada
+                    console.log(`Palavra adicionada: ${word}`);
+                }
+            });
+
+            // Adicione mais lógica JavaScript aqui para:
+            // - Gerenciar o progresso da barra de tempo
+            // - Controlar o estado do jogador
+            // - Validar a frase montada
+            // - Embaralhar e redefinir as palavras
+        });
+    </script>
+</body>
+</html>

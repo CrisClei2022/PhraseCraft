@@ -354,7 +354,7 @@
             aspect-ratio: 16/9; /* Mantenha isso para garantir a proporção do vídeo */
             display: block; /* Garante que não haja espaço extra abaixo do vídeo */
             background-color: #000;
-            border: 2px solid green;
+            border: none;
         }
 
 		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
@@ -444,7 +444,7 @@
         .word-container {
             flex-wrap: wrap;
             width: 95%;
-            border: 2px solid green;
+            border: none;
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
@@ -621,7 +621,7 @@
             </div>
 
             <div class="title-container">
-                <h3>Phrasecraft</h3>
+                <h2>Phrasecraft</h2>
                 <button id="menu-button">Lições</button>
             </div>
 
@@ -1598,7 +1598,7 @@ function init() {
     // player1Clock.start(); // Start if game begins automatically
 
     // Mostrar inicialmente a mensagem para selecionar uma lição
-    document.getElementById('current-lesson').textContent = "Selecione uma lição no menu";
+    document.getElementById('current-lesson').textContent = "Selecione uma lição";
 
     // Verificar se há algum parâmetro na URL para carregar uma lição específica
     const urlParams = new URLSearchParams(window.location.search);

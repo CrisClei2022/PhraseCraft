@@ -687,6 +687,11 @@ const lessons = [
         name: "New West - Those Eyes",
         srtFile: "New_West-Those_Eyes.srt",
         videoUrl: "https://files.catbox.moe/k7xhth.mp4"
+    },
+    {
+        name: "Skye_Riley_-_Death_Of_Me",
+        srtFile: "Skye_Riley_-_Death_Of_Me.srt",
+        videoUrl: "https://f005.backblazeb2.com/file/Avulsas/Skye_Riley_-_Death_Of_Me.mp4"
     }
     // Adicione mais lições conforme necessário
 ];
@@ -722,17 +727,27 @@ function getSrtCdnUrl(filename) {
 
 // Função para processar o conteúdo SRT
 function processSrtContent(srt) {
-    frases = srt.split('\n\n').map(bloco => {
-        let linhas = bloco.split('\n');
-        if (linhas.length < 3) return null;
+    // Regex robusta para capturar os dados da legenda
+    const regex = /(\d+)\r?\n(\d{2}:\d{2}:\d{2}[,.]\d{3}) --> (\d{2}:\d{2}:\d{2}[,.]\d{3})\r?\n([\s\S]*?)(?=\r?\n\r?\n|\s*$)/g;
+    
+    frases = []; // Limpa o array de frases antes de preencher
+    let match;
 
-        return {
-            tempoInicio: converterTempo(linhas[1].split(' --> ')[0].trim()),
-            tempoFim: converterTempo(linhas[1].split(' --> ')[1].trim()),
-            texto: linhas.slice(2).join(' ').trim()
-        };
-    }).filter(frase => frase !== null && frase.texto !== '' && !frase.texto.includes('www.RentAnAdviser.com'));
+    while ((match = regex.exec(srt)) !== null) {
+        // Pega o texto e remove a tag de formatação <i>...</i> e espaços extras
+        const textoLimpo = match[4].replace(/<i>(.*?)<\/i>/g, '$1').trim();
 
+        // Adiciona a frase apenas se não for de um anunciante
+        if (textoLimpo && !textoLimpo.includes('www.RentAnAdviser.com')) {
+            frases.push({
+                tempoInicio: converterTempo(match[2]),
+                tempoFim: converterTempo(match[3]),
+                texto: textoLimpo
+            });
+        }
+    }
+
+    // O resto da lógica da função original permanece
     indiceFrase = 0;
     fraseAtual = frases[indiceFrase];
     palavrasEmbaralhadas = embaralharPalavras(fraseAtual.texto);
@@ -743,7 +758,7 @@ function processSrtContent(srt) {
     fraseAcertada = false;
 
     criarPalavras();
-    atualizarFrase(); // This call will now also update the 'subtitle-content' div
+    atualizarFrase();
     atualizarProgresso();
     atualizarPlacares();
 }

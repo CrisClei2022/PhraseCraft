@@ -693,6 +693,7 @@ const lessons = [
 // Variáveis globais
 let videoElement = document.getElementById('custom-video');
 let currentState = "modeSelection";
+let menuStack = ["modeSelection"]; // Stack inicial
 let frases = [];
 let indiceFrase = 0;
 let fraseAtual = null;
@@ -712,7 +713,45 @@ let player2Clock; // Global variable for player 2's clock
 let mostrarTraducao = false;
 let palavrasDisponiveisElementos = [];
 
-// Função para gerar o URL do CDN do jsDelivr para os arquivos SRT
+// ================================
+//  Funções para gerenciar o stack
+// ================================
+function pushMenuState(newState) {
+    menuStack.push(newState);
+    currentState = newState;
+    updateMenuDisplay();
+}
+
+function popMenuState() {
+    if (menuStack.length > 1) {
+        menuStack.pop();
+        currentState = menuStack[menuStack.length - 1];
+        updateMenuDisplay();
+        return true; // Conseguiu voltar
+    }
+    return false; // Não pode voltar mais (está no estado inicial)
+}
+
+function updateMenuDisplay() {
+    // Esconder todos os menus primeiro
+    document.getElementById('menu-mode').style.display = 'none';
+    document.getElementById('menu-items').style.display = 'none';
+    
+    // Mostrar o menu atual
+    switch(currentState) {
+        case "modeSelection":
+            document.getElementById('menu-mode').style.display = 'block';
+            break;
+        case "lessonList":
+            document.getElementById('menu-items').style.display = 'block';
+            break;
+    }
+}
+
+// ================================
+// Função para gerar o URL do CDN 
+// do jsDelivr para os arquivos SRT
+// ================================
 function getSrtCdnUrl(filename) {
     // URL base do jsDelivr para o seu repositório
     const baseUrl = "https://raw.githubusercontent.com/CrisClei2022/srt/main/";
@@ -1308,8 +1347,9 @@ function reproduzirTrechoAtual() {
 
 // Função para inicializar o estado do menu
 function initializeMenu() {
-    document.getElementById('menu-items').style.display = 'none';
-    document.getElementById('menu-mode').style.display = 'block';
+    menuStack = ["modeSelection"];
+    currentState = "modeSelection";
+    updateMenuDisplay();
 }
 
 // Função para alternar a exibição do menu
@@ -1319,9 +1359,10 @@ function toggleMenu() {
     menuButton.classList.toggle('active');
     menuOverlay.classList.toggle('active');
     
-    // Resetar para o estado inicial
-    document.getElementById('menu-mode').style.display = 'block';
-    document.getElementById('menu-items').style.display = 'none';
+    // Resetar para o estado inicial quando abrir
+    if (menuOverlay.classList.contains('active')) {
+        initializeMenu();
+    }
 }
 
 // Função para alternar a exibição dos itens do menu
@@ -1339,10 +1380,11 @@ function toggleMenuMode() {
 // Função para alternar a exibição da selecao de modo
 function currentMode(mode) {
     if (mode === 'solo') {
-        document.getElementById('menu-mode').style.display = 'none';
-        document.getElementById('menu-items').style.display = 'block';
+        pushMenuState("lessonList");
+    } else if (mode === 'multi') {
+        // Implementar lógica do multiplayer ou mostrar mensagem
+        alert("Modo multiplayer em desenvolvimento");
     }
-    // Para multiplayer, você pode adicionar outra lógica se necessário
 }
 
 // Inicializar botões de menu
@@ -1361,6 +1403,13 @@ function initializeMenuButtons() {
 }
 
 // --- Event Listeners ---
+document.querySelector('.back-button').onclick = function() {
+    const canGoBack = popMenuState();
+    // Apenas fecha o menu se NÃO conseguir voltar (ou seja, já está no estado inicial)
+    if (!canGoBack) {
+        toggleMenu();
+    }
+};
 
 // --- NOVO: Lógica do botão "Desistir" (Passar) ---
 document.getElementById('desistir').onclick = function() {
@@ -1482,7 +1531,6 @@ document.getElementById('lerFrase').onclick = function() {
 };
 
 document.getElementById('menu-button').onclick = toggleMenu;
-document.querySelector('.back-button').onclick = toggleMenu;
 
 // NOVO LISTENER: Adiciona a funcionalidade para o botão de tradução
 document.getElementById('traduzir-btn').onclick = function() {

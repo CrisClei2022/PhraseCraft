@@ -157,7 +157,7 @@
             text-transform: uppercase; /* Optional: makes text uppercase, common in futuristic UIs */
         }
 
-        .lesson-button {
+        .lesson-button, .mode-button {
             display: block;
             width: 100%;
             padding: 15px;
@@ -175,12 +175,12 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        .lesson-button:hover {
+        .lesson-button:hover, .mode-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 14px rgba(0,0,0,0.2);
         }
 
-        .lesson-button:after {
+        .lesson-button:after, .mode-button:after {
             content: '';
             position: absolute;
             top: 0;
@@ -192,7 +192,7 @@
             transition: all 0.6s ease;
         }
 
-        .lesson-button:hover:after {
+        .lesson-button:hover:after, .mode-button:hover:after {
             transform: translateX(100%);
         }
 
@@ -592,18 +592,21 @@
 <body>
     <div class="main-container">
 
-        <div id="menu-overlay">
-        
+        <div id="menu-overlay">        
             <div class="menu-header">
-                <button id="info">Ajuda</button>
-                
+                <button id="info">Ajuda</button>                
                 <button class="close-button">⛌</button>
             </div>
             
+            <div id="menu-mode">
+                <h2 class="menu-title">Selecione o Modo de Jogo</h2>                
+                <button class="mode-button" onclick="currentMode('solo')">Solo</button>
+                <button class="mode-button" onclick="currentMode('multi')">Multiplayer</button>
+            </div>  
+            
             <div id="menu-items">
                 <h2 class="menu-title">Lista de Lições</h2>
-            </div>
-            
+            </div>            
         </div>
 
         <div id="loading">
@@ -698,6 +701,7 @@ const lessons = [
 
 // Variáveis globais
 let videoElement = document.getElementById('custom-video');
+let currentState = "modeSelection";
 let frases = [];
 let indiceFrase = 0;
 let fraseAtual = null;
@@ -1311,13 +1315,43 @@ function reproduzirTrechoAtual() {
     }
 }
 
+// Função para inicializar o estado do menu
+function initializeMenu() {
+    document.getElementById('menu-items').style.display = 'none';
+    document.getElementById('menu-mode').style.display = 'block';
+}
+
 // Função para alternar a exibição do menu
 function toggleMenu() {
     const menuButton = document.getElementById('menu-button');
     const menuOverlay = document.getElementById('menu-overlay');
-
     menuButton.classList.toggle('active');
     menuOverlay.classList.toggle('active');
+    
+    // Resetar para o estado inicial
+    document.getElementById('menu-mode').style.display = 'block';
+    document.getElementById('menu-items').style.display = 'none';
+}
+
+// Função para alternar a exibição dos itens do menu
+function toggleMenuItems() {
+    const menuItems = document.getElementById('menu-items');
+    menuItems.classList.toggle('active');
+}
+
+// Função para alternar a exibição da selecao de modo
+function toggleMenuMode() {
+    const menuMode = document.getElementById('menu-mode');
+    menuMode.classList.toggle('active');
+}
+
+// Função para alternar a exibição da selecao de modo
+function currentMode(mode) {
+    if (mode === 'solo') {
+        document.getElementById('menu-mode').style.display = 'none';
+        document.getElementById('menu-items').style.display = 'block';
+    }
+    // Para multiplayer, você pode adicionar outra lógica se necessário
 }
 
 // Inicializar botões de menu
@@ -1602,8 +1636,50 @@ function switchActiveClock() {
     }
 }
 
+// Função para salvar o progresso do usuário no localStorage
+function salvarProgresso() {
+    if (!currentLessonName) return;
+
+    const progressoData = {
+        lessonName: currentLessonName,
+        fraseIndex: indiceFrase,
+        acertos1: acertos1,
+        acertos2: acertos2,
+        timestamp: new Date().getTime()
+    };
+
+    localStorage.setItem('listeningProProgresso', JSON.stringify(progressoData));
+}
+
+// Função para carregar o progresso salvo
+function carregarProgresso() {
+    const progressoSalvo = localStorage.getItem('listeningProProgresso');
+    if (!progressoSalvo) return null;
+
+    try {
+        return JSON.parse(progressoSalvo);
+    } catch (e) {
+        console.error("Erro ao carregar progresso:", e);
+        return null;
+    }
+}
+
+// Função para verificar se há progresso salvo para a lição atual
+function verificarProgressoLicao(lessonName) {
+    const progresso = carregarProgresso();
+    if (!progresso || progresso.lessonName !== lessonName) return false;
+
+    // Verificar se o progresso é recente (menos de 7 dias)
+    const agora = new Date().getTime();
+    const diferenca = agora - progresso.timestamp;
+    const diasDiferenca = diferenca / (1000 * 60 * 60 * 24);
+
+    return diasDiferenca < 7;
+}
+
 // *** Inicializar a aplicação *** //
 function init() {
+    initializeMenu()
     initializeMenuButtons();
 
     // Initialize clocks
@@ -1677,47 +1753,6 @@ function init() {
             }
         }, 1000);
     }
-}
-
-// Função para salvar o progresso do usuário no localStorage
-function salvarProgresso() {
-    if (!currentLessonName) return;
-
-    const progressoData = {
-        lessonName: currentLessonName,
-        fraseIndex: indiceFrase,
-        acertos1: acertos1,
-        acertos2: acertos2,
-        timestamp: new Date().getTime()
-    };
-
-    localStorage.setItem('listeningProProgresso', JSON.stringify(progressoData));
-}
-
-// Função para carregar o progresso salvo
-function carregarProgresso() {
-    const progressoSalvo = localStorage.getItem('listeningProProgresso');
-    if (!progressoSalvo) return null;
-
-    try {
-        return JSON.parse(progressoSalvo);
-    } catch (e) {
-        console.error("Erro ao carregar progresso:", e);
-        return null;
-    }
-}
-
-// Função para verificar se há progresso salvo para a lição atual
-function verificarProgressoLicao(lessonName) {
-    const progresso = carregarProgresso();
-    if (!progresso || progresso.lessonName !== lessonName) return false;
-
-    // Verificar se o progresso é recente (menos de 7 dias)
-    const agora = new Date().getTime();
-    const diferenca = agora - progresso.timestamp;
-    const diasDiferenca = diferenca / (1000 * 60 * 60 * 24);
-
-    return diasDiferenca < 7;
 }
 
 // Inicializar a aplicação quando o DOM estiver carregado

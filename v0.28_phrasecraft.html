@@ -196,38 +196,29 @@
             transform: translateX(100%);
         }
 
-		/* New CSS for the header row containing 'Ajuda' and the close button */
-		.menu-header {
-		    display: flex;
-		    justify-content: space-between; /* ✨ REVERTIDO: Para empurrar Ajuda e Fechar para as extremidades */
-		    align-items: center;
-		    width: 100%;
-		    padding: 10px 20px;
-		    box-sizing: border-box;
-		    /* Remover 'gap' aqui, já que space-between e margens auto vão gerenciar o espaçamento */
-		}
-        
-		/* Ajustes para o botão "Ajuda" */
-		.close-button, #info {
-		    background: grey;
+    		/* New CSS for the header row containing 'Ajuda' and the close button */
+    		.menu-header {
+    		    display: flex;
+    		    justify-content: space-between; /* ✨ REVERTIDO: Para empurrar Ajuda e Fechar para as extremidades */
+    		    align-items: center;
+    		    width: 100%;
+    		    padding: 10px 20px;
+    		    box-sizing: border-box;
+    		    /* Remover 'gap' aqui, já que space-between e margens auto vão gerenciar o espaçamento */
+    		}
+            
+    		/* Ajustes para o botão "Ajuda" */
+    		.back-button, #info {
+    		    background: grey;
             color: white;
-		    border-radius: 8px;
-		    padding: 10px;
-		    flex-shrink: 0;
-		    /* Remover margin-right: auto; daqui se estiver, não é necessário com justify-content: space-between */
-		}
+    		    border-radius: 8px;
+    		    padding: 10px;
+    		    flex-shrink: 0;
+    		    /* Remover margin-right: auto; daqui se estiver, não é necessário com justify-content: space-between */
+    		}
 
-        .close-button:hover {
+        .back-button:hover {
             background: rgba(255, 255, 255, 0.4);
-            transform: rotate(90deg);
-        }
-
-        .close-button:before {
-            transform: rotate(45deg);
-        }
-
-        .close-button:after {
-            transform: rotate(-45deg);
         }
 
         /* Loading Indicator */
@@ -594,8 +585,8 @@
 
         <div id="menu-overlay">        
             <div class="menu-header">
-                <button id="info">Ajuda</button>                
-                <button class="close-button">⛌</button>
+                <button class="back-button">⬅️</button>
+                <button id="info">Ajuda</button>
             </div>
             
             <div id="menu-mode">
@@ -1491,7 +1482,7 @@ document.getElementById('lerFrase').onclick = function() {
 };
 
 document.getElementById('menu-button').onclick = toggleMenu;
-document.querySelector('.close-button').onclick = toggleMenu;
+document.querySelector('.back-button').onclick = toggleMenu;
 
 // NOVO LISTENER: Adiciona a funcionalidade para o botão de tradução
 document.getElementById('traduzir-btn').onclick = function() {

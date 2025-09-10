@@ -783,7 +783,7 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
                     <button id="btnLogin">Entrar</button>
                     <button id="btnSignup">Cadastrar</button>
                     <div id="user-email-display" style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7);"></div>
-                    <button id="logout-button" class="">Sair</button>
+                    <button id="btnLogout" class="">Sair</button>
                 </div>
             </div>
             
@@ -944,7 +944,8 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
 
     const btnLoginHeader = document.getElementById('btnLogin');
     const btnSignupHeader = document.getElementById('btnSignup');
-    
+    const logoutButtonHeader = document.getElementById('btnLogout');
+
     const btnCloseLogin = document.getElementById('btnCloseLogin');
     const btnCloseSignup = document.getElementById('btnCloseSignup');
     const btnCloseRecover = document.getElementById('btnCloseRecover');
@@ -952,7 +953,6 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
     const recoverForm = document.getElementById('recover-form');
-    const logoutButton = document.getElementById('logout-button');
 	  const userEmailDisplay = document.getElementById('user-email-display');
 
     const loginMessage = document.getElementById('login-message');
@@ -974,14 +974,14 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
         // Esconde tudo primeiro para evitar conflitos
         btnLoginHeader.style.display = 'none';
         btnSignupHeader.style.display = 'none';
-        logoutButton.style.display = 'none';
+        logoutButtonHeader.style.display = 'none';
         userEmailDisplay.style.display = 'none';
 
         if (isLoggedIn) {
             // Se o usuário está logado, mostra o e-mail e o botão de sair
             userEmailDisplay.textContent = userEmail;
             userEmailDisplay.style.display = 'block';
-            logoutButton.style.display = 'block';
+            logoutButtonHeader.style.display = 'block';
         } else {
             // Se o usuário está deslogado, mostra os botões de entrar e cadastrar
             btnLoginHeader.style.display = 'block';
@@ -1117,7 +1117,7 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
     });
 
     // Evento de clique do botão de logout
-    logoutButton.addEventListener('click', async () => {
+    logoutButtonHeader.addEventListener('click', async () => {
         try {
             await account.deleteSession('current');
             // Chama a função que reflete o novo estado na interface
@@ -1133,14 +1133,14 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
         // Esconde tudo primeiro para evitar conflitos
         btnLoginHeader.style.display = 'none';
         btnSignupHeader.style.display = 'none';
-        logoutButton.style.display = 'none';
+        logoutButtonHeader.style.display = 'none';
         userEmailDisplay.style.display = 'none';
 
         if (isLoggedIn) {
             // Se o usuário está logado, mostra o e-mail e o botão de sair
             userEmailDisplay.textContent = userEmail;
             userEmailDisplay.style.display = 'block';
-            logoutButton.style.display = 'block';
+            logoutButtonHeader.style.display = 'block';
         } else {
             // Se o usuário está deslogado, mostra os botões de entrar e cadastrar
             btnLoginHeader.style.display = 'block';

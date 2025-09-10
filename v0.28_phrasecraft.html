@@ -953,7 +953,7 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
     const signupForm = document.getElementById('signup-form');
     const recoverForm = document.getElementById('recover-form');
     const logoutButton = document.getElementById('logout-button');
-	const userEmailDisplay = document.getElementById('user-email-display');
+	  const userEmailDisplay = document.getElementById('user-email-display');
 
     const loginMessage = document.getElementById('login-message');
     const signupMessage = document.getElementById('signup-message');
@@ -964,7 +964,10 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
     const linkToRecover = document.getElementById('link-to-recover');
     const linkToLoginFromRecover = document.getElementById('link-to-login-from-recover');
     const linkToSignupFromRecover = document.getElementById('link-to-signup-from-recover');
-	
+
+    // Variável global para armazenar o estado anterior
+    let previousMenuState = "modeSelection";
+
     /* Função para renderizar a interface de
     ** acordo com o estado de autenticação */
     function renderUIForAuthState(isLoggedIn, userEmail = '') {
@@ -1021,23 +1024,30 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
         }
     }
     
-    // Eventos para abrir as modais a partir do cabeçalho
-    btnLoginHeader.addEventListener('click', () => {
-        showSection('login');
-    });
-    btnSignupHeader.addEventListener('click', () => {
-        showSection('signup');
-    });
+    // Eventos para abrir as modais a partir do cabeçalho
+    btnLoginHeader.addEventListener('click', () => {
+        previousMenuState = currentState; // Salva o estado atual do menu
+        hideMenuContent();
+        showSection('login'); 
+    });
+    btnSignupHeader.addEventListener('click', () => {
+        previousMenuState = currentState; // Salva o estado atual do menu
+        hideMenuContent();
+        showSection('signup');
+    });
 
-    btnCloseLogin.addEventListener('click', () => {
-        loginScreen.classList.add('hidden');
-    });
-    btnCloseSignup.addEventListener('click', () => {
-        signupScreen.classList.add('hidden');
-    });
-    btnCloseRecover.addEventListener('click', () => {
-        recoverScreen.classList.add('hidden');
-    });
+    btnCloseLogin.addEventListener('click', () => {
+        loginScreen.classList.add('hidden');
+        restoreMenuContent(); // Chama a nova função para restaurar o menu
+    });
+    btnCloseSignup.addEventListener('click', () => {
+        signupScreen.classList.add('hidden');
+        restoreMenuContent(); // Chama a nova função para restaurar o menu
+    });
+    btnCloseRecover.addEventListener('click', () => {
+        recoverScreen.classList.add('hidden');
+        restoreMenuContent(); // Chama a nova função para restaurar o menu
+    });
 
     // Eventos para alternar entre as telas de login, cadastro e recuperação
     linkToSignup.addEventListener('click', (e) => {
@@ -1169,23 +1179,6 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
             showSection('main');
         }
     }
-
-    btnLoginHeader.addEventListener('click', () => {
-        // O menu overlay já deve estar ativo, pois os botões estão nele.
-        // Garanta que apenas o conteúdo do menu seja escondido
-        hideMenuContent();
-        
-        // Exibe a tela de login
-        showSection('login'); 
-    });
-        
-    btnSignupHeader.addEventListener('click', () => {
-        // Garanta que apenas o conteúdo do menu seja escondido
-        hideMenuContent();
-        
-        // Exibe a tela de cadastro
-        showSection('signup');
-    });
 // ••••••••••••••••••••••••••••••••
 // Fim do Bloco de Atutenticacao
 // ••••••••••••••••••••••••••••••••
@@ -1889,6 +1882,25 @@ function hideMenuContent() {
     if (menuHeader) {
         menuHeader.style.display = 'none';
     }
+}
+
+// Função para restaurar a exibição do menu
+function restoreMenuContent() {
+    // Mostra o cabeçalho do menu
+    const menuHeader = document.getElementById('menu-header');
+    if (menuHeader) {
+        menuHeader.style.display = 'flex';
+    }
+
+    // Restaura o estado anterior do menu
+    switch(previousMenuState) {
+        case "modeSelection":
+            document.getElementById('menu-mode').style.display = 'block';
+            break;
+        case "lessonList":
+            document.getElementById('menu-items').style.display = 'block';
+            break;
+    }
 }
 
 // Função para inicializar o estado do menu

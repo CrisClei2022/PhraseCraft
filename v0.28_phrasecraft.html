@@ -207,7 +207,7 @@
     		    /* Remover 'gap' aqui, já que space-between e margens auto vão gerenciar o espaçamento */
     		}
             
-    		/* Ajustes para o botão "Ajuda" */
+    		/* Ajustes para o botão "Voltar" */
     		.back-button, #info {
     		    background: grey;
             color: white;
@@ -254,7 +254,139 @@
             transform: translateY(-2px);
             filter: brightness(1.2);
         }
-        
+
+        /**/
+        /* --- Login Screen Container Styles --- */
+        .login-screen-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            z-index: 2000;
+        }
+
+        .login-screen-container.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* --- Login Card Styles --- */
+        .login-card {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: scale(1);
+            animation: loginCardAppear 0.3s ease-out;
+        }
+
+        @keyframes loginCardAppear {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-button:hover {
+            transform: rotate(90deg);
+        }
+
+        .login-card h2 {
+            font-size: 2em;
+            margin-bottom: 25px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-card input {
+            width: 90%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .login-card input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .login-card input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
+        }
+
+        .login-button {
+            width: 50%;
+            padding: 15px;
+            background: linear-gradient(45deg, #4ecdc4, #45b7d1);
+            border: none;
+            border-radius: 8px;
+            color: #0a0a0a;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(69, 183, 209, 0.4);
+        }
+
+        .login-card p {
+            font-size: 0.9em;
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .login-card a {
+            color: #4ecdc4;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-card a:hover {
+            color: #ff6b6b;
+            text-decoration: underline;
+        }
+        /**/
+
         /* Loading Indicator */
         #loading {
             position: fixed;
@@ -382,8 +514,8 @@
             border: none;
         }
 
-		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
-		#subtitle-content {
+    		/* Estilos para o conteúdo da legenda que aparecerá sobre o vídeo */
+    		#subtitle-content {
             position: absolute;
             width: 95%;
             height: auto;
@@ -398,10 +530,10 @@
             transform: translateY(-50%); /* Shifts the element up by half of its own height */
         }
 		
-		/* Classe para ocultar o conteúdo da legenda */
-		#subtitle-content.hidden {
-		    display: none;
-		}
+    		/* Classe para ocultar o conteúdo da legenda */
+    		#subtitle-content.hidden {
+    		    display: none;
+    		}
         
         /* Ajustes para os botões */
         .content-row #buttons {
@@ -506,11 +638,11 @@
             pointer-events: none; /* Disable clicks on already correct words */
         }
 
-	.palavra.no-click {
-	    pointer-events: none; /* Impede que o mouse interaja com o elemento */
-	    opacity: 0.6;        /* Torna um pouco transparente para indicar desativação */
-	    cursor: default;     /* Muda o cursor para indicar que não é clicável */
-	}
+      	.palavra.no-click {
+      	    pointer-events: none; /* Impede que o mouse interaja com o elemento */
+      	    opacity: 0.6;        /* Torna um pouco transparente para indicar desativação */
+      	    cursor: default;     /* Muda o cursor para indicar que não é clicável */
+      	}
 
         @keyframes shake {
             0% { transform: translateX(0); }
@@ -624,7 +756,8 @@
                 <div class="user-buttons">
                     <button id="login-button">Entrar</button>
                     <button id="signup-button">Cadastrar</button>
-                <button id="logout-button" class="">Sair</button>
+                    <div id="user-email-display" style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7);"></div>
+                    <button id="logout-button" class="">Sair</button>
                 </div>
             </div>
             
@@ -636,7 +769,67 @@
             
             <div id="menu-items">
                 <h2 class="menu-title">Lista de Lições</h2>
-            </div>            
+            </div>
+            <!-- Bloco Auth -| Start -->
+            <section id="login-screen" class="login-screen-container hidden">
+                <div class="login-card">
+                    <button class="close-button" id="btnCloseLogin">✕</button>
+                    <h2>Entrar</h2>
+                    <form id="login-form">
+                        <input type="email" id="email-login" placeholder="E-mail" required>
+                        <input type="password" id="password-login" placeholder="Senha" required>
+                        <p id="login-message"></p>
+                        <button type="submit" class="login-button">Entrar</button>
+                    </form>
+                    <p>Esqueceu a senha? <a href="#" id="link-to-recover">Recuperar</a></p>
+                    <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 0;">
+                    <p>Não tem uma conta? <a href="#" id="link-to-signup">Cadastre-se</a></p>
+                </div>
+            </section>
+        
+            <section id="signup-screen" class="login-screen-container hidden">
+                <div class="login-card">
+                    <button class="close-button" id="btnCloseSignup">✕</button>
+                    <h2>Cadastre-se</h2>
+                    <form id="signup-form">
+                        <input type="text" id="nome-signup" placeholder="Nome" required>
+                        <input type="email" id="email-signup" placeholder="E-mail" required>
+                        <input type="password" id="senha-signup" placeholder="Senha" required>
+                        <p id="signup-message"></p>
+                        <button type="submit" class="login-button">Cadastrar</button>
+                    </form>
+                    <p>Já tem uma conta? <a href="#" id="link-to-login">Entrar</a></p>
+                </div>
+            </section>
+        
+            <section id="recover-screen" class="login-screen-container hidden">
+                <div class="login-card">
+                    <button class="close-button" id="btnCloseRecover">✕</button>
+                    <h2>Recuperar Senha</h2>
+                    <form id="recover-form">
+                        <input type="email" id="email-recover" placeholder="E-mail" required>
+                        <p id="recover-message"></p>
+                        <button type="submit" class="login-button">Enviar</button>
+                    </form>
+                    <p>Lembrou da sua senha? <a href="#" id="link-to-login-from-recover">Entrar</a></p>
+                    <p>Não tem uma conta? <a href="#" id="link-to-signup-from-recover">Cadastre-se</a></p>
+                </div>
+            </section>
+            
+            <section id="user-screen" class="login-screen-container hidden">
+                <div class="login-card user-card">
+                    <h2 id="welcome-message"></h2>            
+                    <h1>Editor de Texto</h1>
+                    <div>
+                        <textarea id="editor" placeholder="Digite seu texto aqui..."></textarea>
+                    </div>
+                    <div id="controls" class="hidden">
+                        <button id="btn-continue">Continuar Edição</button>
+                        <button id="btn-restart">Recomeçar</button>
+                    </div>
+                </div>
+            </section>
+            <!-- Bloco Auth -| End -->
         </div>
 
         <div id="loading">
@@ -702,7 +895,8 @@
         <div id="progresso" style="margin-top: 10px; font-size: 0.9em;">Progresso: 0 de 0</div>
 
     </div>
-
+        
+<script src="https://cdn.jsdelivr.net/npm/appwrite@18.2.0"></script>
 <script>
 // ••••••••••••••••••••••••••••••••
 // Inico do Bloco de Atutenticacao

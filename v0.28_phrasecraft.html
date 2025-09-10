@@ -351,7 +351,7 @@
             box-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
         }
 
-        .login-button {
+        .btnLogin {
             width: 50%;
             padding: 15px;
             background: linear-gradient(45deg, #4ecdc4, #45b7d1);
@@ -364,7 +364,7 @@
             transition: all 0.3s ease;
         }
 
-        .login-button:hover {
+        .btnLogin:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(69, 183, 209, 0.4);
         }
@@ -754,8 +754,8 @@
                 <button class="back-button">⬅️</button>
                 <button id="info">Ajuda</button>
                 <div class="user-buttons">
-                    <button id="login-button">Entrar</button>
-                    <button id="signup-button">Cadastrar</button>
+                    <button id="btnLogin">Entrar</button>
+                    <button id="btnSignup">Cadastrar</button>
                     <div id="user-email-display" style="font-size: 0.9em; color: rgba(255, 255, 255, 0.7);"></div>
                     <button id="logout-button" class="">Sair</button>
                 </div>
@@ -770,6 +770,7 @@
             <div id="menu-items">
                 <h2 class="menu-title">Lista de Lições</h2>
             </div>
+            
             <!-- Bloco Auth -| Start -->
             <section id="login-screen" class="login-screen-container hidden">
                 <div class="login-card">
@@ -779,7 +780,7 @@
                         <input type="email" id="email-login" placeholder="E-mail" required>
                         <input type="password" id="password-login" placeholder="Senha" required>
                         <p id="login-message"></p>
-                        <button type="submit" class="login-button">Entrar</button>
+                        <button type="submit" class="btnLogin">Entrar</button>
                     </form>
                     <p>Esqueceu a senha? <a href="#" id="link-to-recover">Recuperar</a></p>
                     <hr style="border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 20px 0;">
@@ -796,7 +797,7 @@
                         <input type="email" id="email-signup" placeholder="E-mail" required>
                         <input type="password" id="senha-signup" placeholder="Senha" required>
                         <p id="signup-message"></p>
-                        <button type="submit" class="login-button">Cadastrar</button>
+                        <button type="submit" class="btnLogin">Cadastrar</button>
                     </form>
                     <p>Já tem uma conta? <a href="#" id="link-to-login">Entrar</a></p>
                 </div>
@@ -809,7 +810,7 @@
                     <form id="recover-form">
                         <input type="email" id="email-recover" placeholder="E-mail" required>
                         <p id="recover-message"></p>
-                        <button type="submit" class="login-button">Enviar</button>
+                        <button type="submit" class="btnLogin">Enviar</button>
                     </form>
                     <p>Lembrou da sua senha? <a href="#" id="link-to-login-from-recover">Entrar</a></p>
                     <p>Não tem uma conta? <a href="#" id="link-to-signup-from-recover">Cadastre-se</a></p>
@@ -901,8 +902,8 @@
 // ••••••••••••••••••••••••••••••••
 // Inico do Bloco de Atutenticacao
 // ••••••••••••••••••••••••••••••••
-    const btnLoginHeader = document.getElementById('login-button');
-    const btnSignupHeader = document.getElementById('signup-button');
+    const btnLoginHeader = document.getElementById('btnLogin');
+    const btnSignupHeader = document.getElementById('btnSignup');
 	
     /* Função para renderizar a interface de
     ** acordo com o estado de autenticação */

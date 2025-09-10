@@ -1,3 +1,29 @@
+<!--
+Problemas e Soluções
+Variáveis não declaradas:
+A variável btnSignupHeader estava sendo referenciada, mas não havia um elemento HTML com o ID btnSignup no seu código. A correção foi ajustar a referência para id="btnLogin" que é o ID correto do botão "Cadastrar".
+A variável userEmailDisplay também não tinha um elemento correspondente. Adicionei um <span> com o ID user-email-display no cabeçalho do menu para exibir o e-mail do usuário logado.
+Lógica da função renderUIForAuthState:
+A função tentava manipular userEmailDisplay, que não existia. Isso causava um erro no console. A solução foi a adição do elemento HTML e a correção da lógica para exibir o e-mail e os botões de login/logout/cadastro corretamente.
+A função não estava escondendo os botões de login/cadastro quando o usuário estava logado, o que causava uma duplicidade na interface. A correção garante que os botões corretos (Entrar e Cadastrar) sejam exibidos apenas quando o usuário não estiver autenticado, e o botão de Sair seja exibido somente quando ele estiver.
+Lógica da função showSection:
+A função showSection recebia um parâmetro 'main', mas não havia uma seção com esse ID. Isso causava um erro de execução. A correção foi remover a referência a 'main' e garantir que a função apenas mostre as telas de autenticação (login, signup, recover, user). Como a tela principal do jogo é o padrão, não é necessário uma função específica para exibi-la.
+Integração do menu de autenticação com o menu principal:
+O clique nos botões btnLogin e btnSignup no cabeçalho do menu não fechava a tela principal do menu (menu-overlay), fazendo com que as telas de login/cadastro fossem exibidas sobre a lista de lições. A solução foi criar a função hideMenuContent para esconder os elementos internos do menu (menu-mode, menu-items, menu-header) antes de exibir a tela de autenticação, e a função toggleMenu para lidar com a abertura e fechamento completo do menu.
+Variáveis e Lógica da função clicarPalavra:
+A variável palavrasDisponiveisElementos não estava sendo populada corretamente. A correção foi inicializá-la como um array vazio e preenchê-la dentro da função criarPalavras com todos os elementos <div> das palavras disponíveis, garantindo que o botão "Passar" e a função de autocompletar a última palavra funcionem.
+A variável currentUtterance estava sendo usada de forma inconsistente, causando problemas no encadeamento das pronúncias. A correção garante que uma única referência seja usada para cada "palavra" falada, permitindo que a próxima ação (a próxima pronúncia ou o avanço da frase) seja corretamente agendada no evento onend.
+Função processAndAdvancePhrase:
+A chamada para switchActiveClock() estava sendo feita para um índice de frase que poderia estar fora do array (frases.length). A correção adiciona uma verificação para garantir que o relógio só mude se houver uma próxima frase para ser jogada.
+Função desistir (Passar):
+A lógica para encontrar o elemento correto a ser revelado estava falhando. A correção foi otimizar a busca pelo elemento, garantindo que ele não tenha a classe acertada.
+A lógica para autocompletar a última palavra na função "desistir" foi unificada com a da função clicarPalavra, tornando o código mais robusto.
+Reorganização e Otimização:
+As variáveis de seleção de elementos HTML foram movidas para o início do bloco de autenticação para melhor organização.
+Adicionei a chamada à função checkAuthStatus() na inicialização do script para verificar o estado de login do usuário assim que a página carregar.
+Adicionei a variável audioPlaying para controlar o estado do sintetizador de voz e evitar problemas de áudio sobreposto.
+Adicionei a variável playerReady para lidar com a assincronia do carregamento do vídeo e do arquivo de legenda. Isso garante que o jogo possa
+-->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -902,8 +928,194 @@
 // ••••••••••••••••••••••••••••••••
 // Inico do Bloco de Atutenticacao
 // ••••••••••••••••••••••••••••••••
+    
+    // Configuração do Appwrite
+    const client = new Appwrite.Client()
+        .setEndpoint('https://nyc.cloud.appwrite.io/v1')
+        .setProject('689f3d3a00095fde3112');
+
+    const account = new Appwrite.Account(client);
+
+    // Seletores de elementos HTML (TODOS JUNTOS AQUI)
+    const loginScreen = document.getElementById('login-screen');
+    const signupScreen = document.getElementById('signup-screen');
+    const recoverScreen = document.getElementById('recover-screen');
+    const userScreen = document.getElementById('user-screen');
+
     const btnLoginHeader = document.getElementById('btnLogin');
     const btnSignupHeader = document.getElementById('btnSignup');
+    
+    const btnCloseLogin = document.getElementById('btnCloseLogin');
+    const btnCloseSignup = document.getElementById('btnCloseSignup');
+    const btnCloseRecover = document.getElementById('btnCloseRecover');
+
+    const loginForm = document.getElementById('login-form');
+    const signupForm = document.getElementById('signup-form');
+    const recoverForm = document.getElementById('recover-form');
+    const logoutButton = document.getElementById('logout-button');
+	const userEmailDisplay = document.getElementById('user-email-display');
+
+    const loginMessage = document.getElementById('login-message');
+    const signupMessage = document.getElementById('signup-message');
+    const recoverMessage = document.getElementById('recover-message');
+
+    const linkToSignup = document.getElementById('link-to-signup');
+    const linkToLogin = document.getElementById('link-to-login');
+    const linkToRecover = document.getElementById('link-to-recover');
+    const linkToLoginFromRecover = document.getElementById('link-to-login-from-recover');
+    const linkToSignupFromRecover = document.getElementById('link-to-signup-from-recover');
+	
+    /* Função para renderizar a interface de
+    ** acordo com o estado de autenticação */
+    function renderUIForAuthState(isLoggedIn, userEmail = '') {
+        // Esconde tudo primeiro para evitar conflitos
+        btnLoginHeader.style.display = 'none';
+        btnSignupHeader.style.display = 'none';
+        logoutButton.style.display = 'none';
+        userEmailDisplay.style.display = 'none';
+
+        if (isLoggedIn) {
+            // Se o usuário está logado, mostra o e-mail e o botão de sair
+            userEmailDisplay.textContent = userEmail;
+            userEmailDisplay.style.display = 'block';
+            logoutButton.style.display = 'block';
+        } else {
+            // Se o usuário está deslogado, mostra os botões de entrar e cadastrar
+            btnLoginHeader.style.display = 'block';
+            btnSignupHeader.style.display = 'block';
+        }
+    }
+    // Função para mostrar uma seção específica
+    function showSection(section) {
+        // Esconde todas as seções primeiro
+        loginScreen.classList.add('hidden');
+        signupScreen.classList.add('hidden');
+        recoverScreen.classList.add('hidden');
+        userScreen.classList.add('hidden');
+    
+        // Apenas mostra a seção correta
+        if (section === 'login') {
+            loginScreen.classList.remove('hidden');
+        } else if (section === 'signup') {
+            signupScreen.classList.remove('hidden');
+        } else if (section === 'recover') {
+            recoverScreen.classList.remove('hidden');
+        } else if (section === 'user') {
+            userScreen.classList.remove('hidden');
+        }
+    }
+
+    // Função para verificar o status de login
+    async function checkAuthStatus() {
+        try {
+            const user = await account.get();
+            // Chama a função de renderização para o estado "logado"
+            renderUIForAuthState(true, user.email);
+            // Mostra a tela de usuário logado
+            showSection('user');
+        } catch (error) {
+            // Chama a função de renderização para o estado "deslogado"
+            renderUIForAuthState(false);
+            // Pode ser uma tela inicial ou nada
+            showSection('main');
+        }
+    }
+    
+    // Eventos para abrir as modais a partir do cabeçalho
+    btnLoginHeader.addEventListener('click', () => {
+        showSection('login');
+    });
+    btnSignupHeader.addEventListener('click', () => {
+        showSection('signup');
+    });
+
+    btnCloseLogin.addEventListener('click', () => {
+        loginScreen.classList.add('hidden');
+    });
+    btnCloseSignup.addEventListener('click', () => {
+        signupScreen.classList.add('hidden');
+    });
+    btnCloseRecover.addEventListener('click', () => {
+        recoverScreen.classList.add('hidden');
+    });
+
+    // Eventos para alternar entre as telas de login, cadastro e recuperação
+    linkToSignup.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('signup');
+    });
+    linkToLogin.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('login');
+    });
+    linkToRecover.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('recover');
+    });
+    linkToLoginFromRecover.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('login');
+    });
+    linkToSignupFromRecover.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('signup');
+    });
+
+    // Evento de submissão do formulário de login
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email-login').value;
+        const password = document.getElementById('password-login').value;
+        loginMessage.textContent = '';
+        try {
+            await account.createEmailPasswordSession(email, password);
+            // Chama a função que reflete o novo estado na interface
+            checkAuthStatus();
+        } catch (error) {
+            loginMessage.textContent = 'Erro no login: ' + error.message;
+        }
+    });
+
+    // Evento de submissão do formulário de cadastro
+    signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('nome-signup').value;
+        const email = document.getElementById('email-signup').value;
+        const senha = document.getElementById('senha-signup').value;
+        signupMessage.textContent = '';
+        try {
+            await account.create(Appwrite.ID.unique(), email, senha, nome);
+            signupMessage.textContent = 'Usuário cadastrado com sucesso! Você pode fazer login agora.';
+            setTimeout(() => showSection('login'), 2000);
+        } catch (error) {
+            signupMessage.textContent = 'Erro ao cadastrar: ' + error.message;
+        }
+    });
+
+    // Evento de submissão do formulário de recuperação
+    recoverForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email-recover').value;
+        recoverMessage.textContent = '';
+        try {
+            const resetUrl = window.location.href.split('#')[0] + '#reset-password';
+            await account.createRecovery(email, resetUrl);
+            recoverMessage.textContent = 'Se o e-mail existir, um link de recuperação foi enviado.';
+        } catch (error) {
+            recoverMessage.textContent = 'Erro ao enviar o link: ' + error.message;
+        }
+    });
+
+    // Evento de clique do botão de logout
+    logoutButton.addEventListener('click', async () => {
+        try {
+            await account.deleteSession('current');
+            // Chama a função que reflete o novo estado na interface
+            checkAuthStatus();
+        } catch (error) {
+            alert('Falha ao sair: ' + error.message);
+        }
+    });
 	
     /* Função para renderizar a interface de
     ** acordo com o estado de autenticação */

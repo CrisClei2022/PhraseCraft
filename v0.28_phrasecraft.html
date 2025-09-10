@@ -618,7 +618,7 @@
     <div class="main-container">
 
         <div id="menu-overlay">        
-            <div class="menu-header">
+            <div class="menu-header" id="menu-header">
                 <button class="back-button">⬅️</button>
                 <button id="info">Ajuda</button>
                 <div class="user-buttons">
@@ -707,7 +707,8 @@
 // ••••••••••••••••••••••••••••••••
 // Inico do Bloco de Atutenticacao
 // ••••••••••••••••••••••••••••••••
-
+    const btnLoginHeader = document.getElementById('login-button');
+    const btnSignupHeader = document.getElementById('signup-button');
 	
     /* Função para renderizar a interface de
     ** acordo com o estado de autenticação */
@@ -746,8 +747,6 @@
         }
     }
     
-    
-
     // Função para verificar o status de login
     async function checkAuthStatus() {
         try {
@@ -763,6 +762,23 @@
             showSection('main');
         }
     }
+
+    btnLoginHeader.addEventListener('click', () => {
+        // O menu overlay já deve estar ativo, pois os botões estão nele.
+        // Garanta que apenas o conteúdo do menu seja escondido
+        hideMenuContent();
+        
+        // Exibe a tela de login
+        showSection('login'); 
+    });
+        
+    btnSignupHeader.addEventListener('click', () => {
+        // Garanta que apenas o conteúdo do menu seja escondido
+        hideMenuContent();
+        
+        // Exibe a tela de cadastro
+        showSection('signup');
+    });
 // ••••••••••••••••••••••••••••••••
 // Fim do Bloco de Atutenticacao
 // ••••••••••••••••••••••••••••••••
@@ -1447,6 +1463,27 @@ function reproduzirTrechoAtual() {
     }
 }
 
+// Função para esconder todos os itens internos do menu e o cabeçalho
+function hideMenuContent() {
+    // Esconde o contêiner de seleção de modo
+    const menuMode = document.getElementById('menu-mode');
+    if (menuMode) {
+        menuMode.style.display = 'none';
+    }
+
+    // Esconde o contêiner de lista de lições
+    const menuItems = document.getElementById('menu-items');
+    if (menuItems) {
+        menuItems.style.display = 'none';
+    }
+    
+    // Esconde o cabeçalho do menu, se existir
+    const menuHeader = document.getElementById('menu-header');
+    if (menuHeader) {
+        menuHeader.style.display = 'none';
+    }
+}
+
 // Função para inicializar o estado do menu
 function initializeMenu() {
     menuStack = ["modeSelection"];
@@ -1454,14 +1491,18 @@ function initializeMenu() {
     updateMenuDisplay();
 }
 
-// Função para alternar a exibição do menu
+// Onde a lógica de esconder tudo é centralizada e reutilizável
 function toggleMenu() {
     const menuButton = document.getElementById('menu-button');
     const menuOverlay = document.getElementById('menu-overlay');
     menuButton.classList.toggle('active');
     menuOverlay.classList.toggle('active');
-    
-    // Resetar para o estado inicial quando abrir
+
+    // Ao fechar o menu, chame a função para resetar a exibição
+    if (!menuOverlay.classList.contains('active')) {
+        hideMenuContent();
+    }
+    // Ao abrir, ainda pode usar sua lógica de inicialização
     if (menuOverlay.classList.contains('active')) {
         initializeMenu();
     }

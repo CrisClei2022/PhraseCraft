@@ -704,6 +704,69 @@
     </div>
 
 <script>
+// ••••••••••••••••••••••••••••••••
+// Inico do Bloco de Atutenticacao
+// ••••••••••••••••••••••••••••••••
+
+	
+    /* Função para renderizar a interface de
+    ** acordo com o estado de autenticação */
+    function renderUIForAuthState(isLoggedIn, userEmail = '') {
+        // Esconde tudo primeiro para evitar conflitos
+        btnLoginHeader.style.display = 'none';
+        btnSignupHeader.style.display = 'none';
+        logoutButton.style.display = 'none';
+        userEmailDisplay.style.display = 'none';
+
+        if (isLoggedIn) {
+            // Se o usuário está logado, mostra o e-mail e o botão de sair
+            userEmailDisplay.textContent = userEmail;
+            userEmailDisplay.style.display = 'block';
+            logoutButton.style.display = 'block';
+        } else {
+            // Se o usuário está deslogado, mostra os botões de entrar e cadastrar
+            btnLoginHeader.style.display = 'block';
+            btnSignupHeader.style.display = 'block';
+        }
+    }
+
+    // Função para verificar o status de login
+    async function checkAuthStatus() {
+        try {
+            const user = await account.get();
+            // Chama a função de renderização para o estado "logado"
+            renderUIForAuthState(true, user.email);
+            // Mostra a tela de usuário logado
+            showSection('user');
+        } catch (error) {
+            // Chama a função de renderização para o estado "deslogado"
+            renderUIForAuthState(false);
+            // Pode ser uma tela inicial ou nada
+            showSection('main');
+        }
+    }
+    
+    
+
+    // Função para verificar o status de login
+    async function checkAuthStatus() {
+        try {
+            const user = await account.get();
+            // Chama a função de renderização para o estado "logado"
+            renderUIForAuthState(true, user.email);
+            // Mostra a tela de usuário logado
+            showSection('user');
+        } catch (error) {
+            // Chama a função de renderização para o estado "deslogado"
+            renderUIForAuthState(false);
+            // Pode ser uma tela inicial ou nada
+            showSection('main');
+        }
+    }
+// ••••••••••••••••••••••••••••••••
+// Fim do Bloco de Atutenticacao
+// ••••••••••••••••••••••••••••••••
+
 // Lições disponíveis (nome do arquivo SRT e URL do vídeo)
 const lessons = [
     {
@@ -1757,9 +1820,10 @@ function verificarProgressoLicao(lessonName) {
 
 // *** Inicializar a aplicação *** //
 function init() {
-    initializeMenu()
+    initializeMenu();
     initializeMenuButtons();
-
+	// checkAuthStatus();
+    
     // Initialize clocks
     player1Clock = createClock('clock-face1');
     player2Clock = createClock('clock-face2');

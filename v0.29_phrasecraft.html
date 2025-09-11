@@ -161,15 +161,7 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
         }
 
         #menu-items {
-            justify-content: center;
-            width: 80%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 10px;
-            background-color: #3b0047;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+
         }
 
         .menu-title {
@@ -222,16 +214,15 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
             transform: translateX(100%);
         }
 
-    		/* New CSS for the header row containing 'Ajuda' and the close button */
-    		.menu-header {
-    		    display: flex;
-    		    justify-content: space-between; /* ✨ REVERTIDO: Para empurrar Ajuda e Fechar para as extremidades */
-    		    align-items: center;
-    		    width: 100%;
-    		    padding: 10px 20px;
-    		    box-sizing: border-box;
-    		    /* Remover 'gap' aqui, já que space-between e margens auto vão gerenciar o espaçamento */
-    		}
+    	/* New CSS for the header row containing 'Ajuda' and the close button */
+    	.menu-header {
+    		display: flex;
+    		justify-content: space-between;
+    		align-items: center;
+    		width: 100%;
+    		padding: 10px 20px;
+    		box-sizing: border-box;
+    	}
             
     		/* Ajustes para o botão "Voltar" */
     		.back-button, #info {
@@ -246,39 +237,58 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
         .back-button:hover {
             background: rgba(255, 255, 255, 0.4);
         }
-		
-        /* Estilos para div de Entrar e Cadastrar */
-        .user-buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 8px;
+		/* menu footer */
+		.menu-footer {
+            display: flex; /* Inicialmente oculto */
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: auto;
         }
-
-        .user-buttons div {
+        
+        .footer-btn {
+            flex: 1;
+            padding: 10px;
+            margin: 0 5px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
             font-size: 0.9em;
-            font-weight: 500;
-            color: #ffffff;
             cursor: pointer;
-            text-decoration: none;
             transition: all 0.3s ease;
         }
-
-        .user-buttons div:hover {
-            color: #4ecdc4;
-        }
-
-        .user-buttons .btnSignup {
+        
+        .footer-btn.active {
             background: linear-gradient(45deg, #4ecdc4, #45b7d1);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 600;
+            border-color: #4ecdc4;
+            color: #000;
+            font-weight: bold;
         }
-
-        .user-buttons .btnSignup:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.2);
+        
+        .footer-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .footer-btn.active:hover {
+            background: linear-gradient(45deg, #5ed3ca, #4bc4e2);
+        }
+        
+        /* Estilos para div de Entrar e Cadastrar */
+        .user-buttons button {
+            background: none;
+            border: none;
+            padding: 0;
+            margin: 0;
+            font: inherit;
+            color: #00ccff;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        
+        .user-buttons button:hover {
+            color: darkblue;
         }
 
         /**/
@@ -795,6 +805,34 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
             
             <div id="menu-items">
                 <h2 class="menu-title">Lista de Lições</h2>
+                
+                <!-- Card Continuar (só aparece se há progresso na categoria atual) -->
+                <div id="continue-card" class="continue-card hidden">
+                    <div class="continue-header">Continue de onde parou</div>
+                    <div class="continue-lesson-name" id="continue-lesson-name">Lady Gaga - Scheiße</div>
+                    <div class="continue-progress" id="continue-progress">Frase 15 de 45 • Última sessão: há 2 dias</div>
+                    <button class="continue-button" id="continue-button">Continuar</button>
+                </div>
+            
+                <!-- Lista de lições será populada dinamicamente aqui -->
+                <div id="lessons-list"></div>
+            
+                <!-- Footer de navegação -->
+                <div class="menu-footer" id="menu-footer">
+                    <button class="footer-btn" id="search-btn">
+                        <span class="search-icon">🔍</span>
+                        <span class="btn-text">Buscar</span>
+                    </button>
+                    <button class="footer-btn active" id="avulsas-btn">Avulsas</button>
+                    <button class="footer-btn" id="trilhas-btn">Trilhas</button>
+                </div>
+            
+                <!-- Footer em modo busca (inicialmente oculto) -->
+                <div class="search-footer hidden" id="search-footer">
+                    <input type="text" class="search-input" id="search-input" placeholder="Pesquisar lições...">
+                    <button class="filter-btn" id="filter-btn" title="Filtros">⚙️</button>
+                    <button class="close-search-btn" id="close-search-btn">✕</button>
+                </div>
             </div>
             
             <!-- Bloco Auth -| Start -->
@@ -1919,43 +1957,30 @@ function toggleMenu() {
     }
 }
 
-// Função para alternar a exibição dos itens do menu
-function toggleMenuItems() {
-    const menuItems = document.getElementById('menu-items');
-    menuItems.classList.toggle('active');
-    
-    const menuHeader = document.getElementById('menu-header');
-    if (menuHeader) {
-        menuHeader.style.display = 'none';
-    }
-}
-
-// Função para alternar a exibição da selecao de modo
-function toggleMenuMode() {
-    const menuMode = document.getElementById('menu-mode');
-    menuMode.classList.toggle('active');
-    
-    const menuHeader = document.getElementById('menu-header');
-    if (menuHeader) {
-        menuHeader.style.display = 'none';
-    }
+function showLessonsList() {
+    document.getElementById('menu-mode').style.display = 'none';    
+    document.getElementById('menu-items').style.display = 'block';
+    document.getElementById('menu-header').style.display = 'flex';  
+    document.getElementById('menu-footer').style.display = 'flex';
 }
 
 // Função para alternar a exibição da selecao de modo
 function currentMode(mode) {
     if (mode === 'solo') {
+        showLessonsList();
         pushMenuState("lessonList");
     } else if (mode === 'multi') {
-        // Implementar lógica do multiplayer ou mostrar mensagem
         alert("Modo multiplayer em desenvolvimento");
     }
 }
 
-// Inicializar botões de menu
+// Inicializar botões das lições
 function initializeMenuButtons() {
-    const menuItemsContainer = document.getElementById('menu-items');
-    // Limpa os botões existentes, mantendo o título
-    menuItemsContainer.innerHTML = '<h2 class="menu-title">Lista de Lições</h2>';
+    // Seleciona o contêiner específico para a lista de lições
+    const lessonsListContainer = document.getElementById('lessons-list');
+    
+    // Limpa apenas a lista de lições, preservando o resto do menu-items (como o footer)
+    lessonsListContainer.innerHTML = '';
 
     // Combina todas as lições em uma única lista
     const allLessons = [...AppData.lessons.avulsas, ...AppData.lessons.trilha];
@@ -1966,7 +1991,7 @@ function initializeMenuButtons() {
         button.classList.add('lesson-button');
         // O onclick agora passa o índice global da lista combinada
         button.onclick = () => loadLesson(index);
-        menuItemsContainer.appendChild(button);
+        lessonsListContainer.appendChild(button); // Adiciona o botão ao contêiner da lista
     });
 }
 

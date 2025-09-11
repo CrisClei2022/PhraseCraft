@@ -275,3 +275,46 @@ Para ser realista e manter a clareza, a aplicação precisa de três tipos de co
 * **Aba de Playlists do Usuário:** No menu de navegação, o usuário tem uma seção dedicada às suas playlists pessoais. Pode ver as playlists que criou e as playlists estruturadas que está seguindo.
 
 Essa estrutura é clara e realista. Separa as responsabilidades: o professor é o curador do conteúdo "oficial" (aulas avulsas e playlists estruturadas), e o usuário é o curador do seu próprio aprendizado (playlists personalizadas). Essa divisão de papéis evita a confusão e empodera ambos os lados da plataforma.
+
+**A Tela de Pesquisa: A Estrutura Ideal**  
+O layout proposto é eficiente e alinhado com as convenções atuais de design.
+
+* **Ícone da Lupa:** Padrão e reconhecível.
+* **Campo de Texto (Input):** Onde o usuário digita a sua busca.
+* **Filtros ao Lado:** Posicionar os filtros ao lado do campo de texto é uma ótima forma de ter acesso rápido a eles sem poluir a tela.
+    * Ao clicar no campo de texto, a tela pode se expandir para exibir os filtros e as pesquisas recentes ou populares. Isso ajuda o usuário a encontrar o que precisa de forma mais ágil.
+
+Como os Filtros se Aplicam aos Resultados de Pesquisa
+O filtro "avulsas ou trilha" é o mais importante. Quando uma delas é selecionada, a tela de resultados se ajusta:
+
+* **Filtro "Trilhas":** Mostra apenas os cards de playlists.
+* **Filtro "Avulsas":** Mostra apenas os cards de lições avulsas.
+
+Isso garante que a pesquisa seja precisa e que o usuário encontre o tipo de conteúdo que deseja de forma eficiente.
+
+---
+
+O nome **Performance** é uma escolha excelente. É mais dinâmico e motivador do que "taxa de finalização". O conceito de performance se encaixa perfeitamente no que se quer transmitir: engajamento, produtividade e a ideia de que o usuário está, de fato, melhorando.
+
+Vamos analisar essa ideia de forma crítica, considerando a sua aplicação no app e as implicações que ela traz.
+
+### Por que "Performance" Funciona
+
+* **Evita a Frustração:** O termo "performance" foca na ação do usuário, não na estatística fria da lição. Sugere que o usuário é o agente ativo de seu próprio aprendizado, e que o resultado da lição reflete o esforço, e não a dificuldade da lição em si. Isso é crucial para manter a motivação.
+* **Abre o Caminho para Gamificação:** Performance é um conceito central em jogos. Ele permite a criação de um sistema de pontuação, rankings e competições, o que estimula o engajamento e a produtividade, como foi mencionado. Isso torna o aprendizado mais divertido e viciante.
+* **Flexibilidade:** "Performance" é um termo guarda-chuva. Pode ser a combinação de várias métricas, como o tempo de conclusão, a porcentagem de acertos na formação de frases e a taxa de conclusão. Isso permite que se construa um sistema de pontuação robusto no futuro, sem ter que mudar o nome.
+
+### Como Usar "Performance" no Aplicativo
+
+* **Na Tela de Prévia da Lição:** Em vez de "Taxa de Finalização", use algo como "**Performance da Turma**" ou "**Média de Performance**". Mostre uma barra de progresso, um número (ex: 85%) ou um ícone que represente a média do desempenho dos alunos.
+* **No Perfil do Aluno:** Crie uma seção de "**Minha Performance**" no perfil. Nela, o aluno pode ver a performance geral e um histórico de seu desempenho em cada lição. O ranking pode ser uma seção separada para estimular a competição.
+* **Na Conclusão da Lição:** Após o usuário terminar uma lição, mostre uma tela de resultados detalhada. Nela, a performance do aluno na lição é exibida com um grande número ou um ícone (ex: uma estrela dourada). Isso reforça o senso de conquista.
+
+### Pontos de Crítica e Realismo
+
+* **Equilíbrio é Chave:** O foco excessivo em performance e ranking pode ser contraproducente. Pode afastar usuários que querem aprender sem a pressão de uma competição. A plataforma deve sempre oferecer a opção de focar no aprendizado em vez da pontuação, talvez com um modo "sem ranking".
+* **Transparência nas Métricas:** Para que a ideia de performance seja justa, os alunos precisam entender o que a pontuação representa. O que significa uma performance de 90%? Significa que acertou 90% das frases? Que concluiu 90% do tempo esperado? As métricas precisam ser claras.
+
+---
+
+A decisão de usar "**Performance**" é um passo na direção certa para criar um aplicativo que não só ensina, mas também motiva e engaja.

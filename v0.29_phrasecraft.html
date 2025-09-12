@@ -2374,15 +2374,31 @@ function init() {
         pararMonitorTempo();
     });
 
-    // Verificar se há uma última lição acessada
+    // Verificar se há uma última lição acessada e progresso salvo
     const lastLessonIndex = localStorage.getItem('lastLessonIndex');
+    const progressoSalvo = carregarProgresso(); // Reutiliza a função existente para carregar o progresso
+
     if (lastLessonIndex !== null && !isNaN(lastLessonIndex) && parseInt(lastLessonIndex) < allLessons.length) {
-        // Perguntar ao usuário se deseja carregar a última lição
+        const lesson = allLessons[parseInt(lastLessonIndex)];
+        let confirmMessage = `Deseja continuar a lição "${lesson.name}"`;
+
+        if (progressoSalvo && progressoSalvo.lessonName === lesson.name) {
+            confirmMessage += ` da frase ${progressoSalvo.fraseIndex + 1} de ${frases.length}?`; // Adiciona info da frase
+        } else {
+            confirmMessage += `?`;
+        }
+
         setTimeout(() => {
-            const lessonName = allLessons[parseInt(lastLessonIndex)].name;
-            const carregarUltimaLicao = confirm(`Deseja carregar a última lição acessada? (${lessonName})`);
-            if (carregarUltimaLicao) {
+            const continuarLicao = confirm(confirmMessage);
+            if (continuarLicao) {
                 loadLesson(parseInt(lastLessonIndex));
+                // Se houver progresso salvo para esta lição, restaure o índice da frase
+                if (progressoSalvo && progressoSalvo.lessonName === lesson.name) {
+                    indiceFrase = progressoSalvo.fraseIndex;
+                    // Você pode precisar chamar atualizarFrase() e reproduzirTrechoAtual() aqui
+                    // para garantir que a interface e o vídeo/áudio comecem da frase correta.
+                    // No entanto, loadLesson já faz algumas inicializações, então teste cuidadosamente.
+                }
             }
         }, 1000);
     }

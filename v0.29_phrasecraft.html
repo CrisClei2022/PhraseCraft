@@ -808,10 +808,10 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
                 
                 <!-- Card Continuar (só aparece se há progresso na categoria atual) -->
                 <div id="continue-card" class="continue-card hidden">
-                    <div class="continue-header">Continue de onde parou</div>
+                    <div class="continue-header"></div>
                     <div class="continue-lesson-name" id="continue-lesson-name">Lady Gaga - Scheiße</div>
                     <div class="continue-progress" id="continue-progress">Frase 15 de 45 • Última sessão: há 2 dias</div>
-                    <button class="continue-button" id="continue-button">Continuar</button>
+                    <button class="continue-button" id="continue-button"> ⏩ Continuar</button>
                 </div>
             
                 <!-- Lista de lições será populada dinamicamente aqui -->
@@ -1427,8 +1427,7 @@ function startRandomPlayerClock() {
 }
 	
 // Função para carregar uma lição
-function loadLesson(lessonIndex) {
-    // Combina todas as lições em uma única lista para facilitar o acesso pelo índice
+function loadLesson(lessonIndex, shouldRestoreProgress = false) {
     const allLessons = [...AppData.lessons.avulsas, ...AppData.lessons.trilha];
     const lesson = allLessons[lessonIndex];
     
@@ -1438,35 +1437,27 @@ function loadLesson(lessonIndex) {
     }
 
     currentLessonName = lesson.name;
-
-    // Atualizar o título da lição atual
     document.getElementById('current-lesson').textContent = currentLessonName;
 
     // Configurar o vídeo
     videoElement.src = lesson.videoUrl;
     videoElement.load();
 
-    // *** LÓGICA PRINCIPAL AQUI ***
-    // Decide se usa a URL da legenda diretamente ou se a constrói
     let finalSrtUrl;
     if (lesson.srtFile && lesson.srtFile.startsWith('http')) {
-        // Se for uma URL completa, use-a diretamente
         finalSrtUrl = lesson.srtFile;
     } else {
-        // Se for apenas um nome de arquivo, use a função auxiliar para construir a URL
         finalSrtUrl = getSrtCdnUrl(lesson.srtFile);
     }
-
 
     // Carregar o arquivo SRT usando a URL final
     loadSrtFromUrl(finalSrtUrl).then(success => {
         if (success) {
-            // Verificar se há progresso salvo para esta lição
-            const progressoSalvo = carregarProgresso();
-            if (progressoSalvo && progressoSalvo.lessonName === currentLessonName) {
-                const retomar = confirm(`Deseja continuar da frase onde parou? | Frase ${progressoSalvo.fraseIndex + 1} | ${progressoSalvo.lessonName} |`);
-
-                if (retomar && progressoSalvo.fraseIndex < frases.length) {
+            // VERIFICA E RESTAURA O PROGRESSO APENAS SE A FLAG shouldRestoreProgress ESTIVER ATIVA
+            if (shouldRestoreProgress) {
+                const progressoSalvo = carregarProgresso();
+                // Verifique se o progresso salvo é para a lição correta e se o índice é válido
+                if (progressoSalvo && progressoSalvo.lessonName === currentLessonName && progressoSalvo.fraseIndex < frases.length) {
                     indiceFrase = progressoSalvo.fraseIndex;
                     acertos1 = progressoSalvo.acertos1;
                     acertos2 = progressoSalvo.acertos2;
@@ -1475,15 +1466,29 @@ function loadLesson(lessonIndex) {
                     palavrasClicadas = [];
                     fraseAcertada = false;
                     progresso = indiceFrase;
-
                     criarPalavras();
                     atualizarFrase();
                     atualizarProgresso();
                     atualizarPlacares();
+                    console.log(`Progresso da lição '${currentLessonName}' restaurado para a frase ${indiceFrase + 1}.`);
+                } else {
+                    // Se não houver progresso válido para restaurar, comece do zero
+                    indiceFrase = 0;
+                    acertos1 = 0;
+                    acertos2 = 0;
+                    progresso = 0;
+                    palavrasEmbaralhadas = embaralharPalavras(fraseAtual.texto);
+                    palavrasClicadas = [];
+                    fraseAcertada = false;
+                    criarPalavras();
+                    atualizarFrase();
+                    atualizarProgresso();
+                    atualizarPlacares();
+                    console.log("Não foi possível restaurar o progresso. Iniciando a lição do começo.");
                 }
             }
         }
-	startRandomPlayerClock();
+        startRandomPlayerClock();
     });
 
     // Fechar o menu
@@ -1974,6 +1979,20 @@ function currentMode(mode) {
     }
 }
 
+// Mostrar e esconder o card
+const continueCard = document.getElementById('continue-card');
+const continueLessonName = document.getElementById('continue-lesson-name');
+const continueProgress = document.getElementById('continue-progress');
+const continueButton = document.getElementById('continue-button');
+
+function showContinueCard() {
+    continueCard.classList.remove('hidden');
+}
+
+function hideContinueCard() {
+    continueCard.classList.add('hidden');
+}
+
 // Inicializar botões das lições
 function initializeMenuButtons() {
     // Seleciona o contêiner específico para a lista de lições
@@ -2375,33 +2394,43 @@ function init() {
     });
 
     // Verificar se há uma última lição acessada e progresso salvo
+    // A sua lógica original de verificação de progresso
     const lastLessonIndex = localStorage.getItem('lastLessonIndex');
-    const progressoSalvo = carregarProgresso(); // Reutiliza a função existente para carregar o progresso
+    const progressoSalvo = carregarProgresso();
+    
+    // A sua lógica de verificação
+    if (lastLessonIndex !== null && !isNaN(lastLessonIndex) && parseInt(lastLessonIndex) < allLessons.length) {
+        const lesson = allLessons[parseInt(lastLessonIndex)];
+        // Supondo que 'frases' esteja dentro do objeto da lição
+        // É melhor obter a lista de frases após carregar o SRT para evitar erros,
+        // então vamos remover essa linha ou deixá-la comentada.
+        // const frases = lesson.frases;
 
-    if (lastLessonIndex !== null && !isNaN(lastLessonIndex) && parseInt(lastLessonIndex) < allLessons.length) {
-        const lesson = allLessons[parseInt(lastLessonIndex)];
-        let confirmMessage = `Deseja continuar a lição "${lesson.name}"`;
+        // Preenche os dados do card
+        continueLessonName.textContent = lesson.name;
 
-        if (progressoSalvo && progressoSalvo.lessonName === lesson.name) {
-            confirmMessage += ` da frase ${progressoSalvo.fraseIndex + 1} de ${frases.length}?`; // Adiciona info da frase
-        } else {
-            confirmMessage += `?`;
-        }
+        const progressoSalvo = carregarProgresso();
 
-        setTimeout(() => {
-            const continuarLicao = confirm(confirmMessage);
-            if (continuarLicao) {
-                loadLesson(parseInt(lastLessonIndex));
-                // Se houver progresso salvo para esta lição, restaure o índice da frase
-                if (progressoSalvo && progressoSalvo.lessonName === lesson.name) {
-                    indiceFrase = progressoSalvo.fraseIndex;
-                    // Você pode precisar chamar atualizarFrase() e reproduzirTrechoAtual() aqui
-                    // para garantir que a interface e o vídeo/áudio comecem da frase correta.
-                    // No entanto, loadLesson já faz algumas inicializações, então teste cuidadosamente.
-                }
-            }
-        }, 1000);
-    }
+        if (progressoSalvo && progressoSalvo.lessonName === lesson.name) {
+            continueProgress.textContent = `Frase ${progressoSalvo.fraseIndex + 1}`; // Removido o 'de ${frases.length}' pois a lista ainda não está carregada.
+        } else {
+            continueProgress.textContent = `Iniciar lição`;
+        }
+
+        // Mostra o card de continuar
+        showContinueCard();
+
+        // Adiciona um listener de evento ao botão "Continuar"
+        // Apenas chame a loadLesson com a flag de restauração
+        continueButton.onclick = () => {
+            loadLesson(parseInt(lastLessonIndex), true); // <--- AQUI ESTÁ A MUDANÇA PRINCIPAL
+            hideContinueCard();
+        };
+
+    } else {
+        // Se não houver progresso, garanta que o card está escondido
+        hideContinueCard();
+    }
 }
 
 // Inicializar a aplicação quando o DOM estiver carregado

@@ -1198,9 +1198,47 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
     // Define as constantes do seu projeto
     const DATABASE_ID = '68bfc30500251b74b4fc';
     const COLLECTION_ID = '68bfc325002b09dd5ea5';
+
+    // Função para salvar o progresso do usuário no localStorage
+    function salvarProgresso() {
+        if (!currentLessonName) return;
     
+        const progressoData = {
+            lessonName: currentLessonName,
+            fraseIndex: indiceFrase,
+            acertos1: acertos1,
+            acertos2: acertos2,
+            timestamp: new Date().getTime()
+        };
     
+        localStorage.setItem('listeningProProgresso', JSON.stringify(progressoData));
+    }
     
+    // Função para carregar o progresso salvo
+    function carregarProgresso() {
+        const progressoSalvo = localStorage.getItem('listeningProProgresso');
+        if (!progressoSalvo) return null;
+    
+        try {
+            return JSON.parse(progressoSalvo);
+        } catch (e) {
+            console.error("Erro ao carregar progresso:", e);
+            return null;
+        }
+    }
+    
+    // Função para verificar se há progresso salvo para a lição atual
+    function verificarProgressoLicao(lessonName) {
+        const progresso = carregarProgresso();
+        if (!progresso || progresso.lessonName !== lessonName) return false;
+    
+        // Verificar se o progresso é recente (menos de 7 dias)
+        const agora = new Date().getTime();
+        const diferenca = agora - progresso.timestamp;
+        const diasDiferenca = diferenca / (1000 * 60 * 60 * 24);
+    
+        return diasDiferenca < 7;
+    }
 // ••••••••••••••••••••••••••••••••
 // Bloco do Banco de Dados | Fim
 // ••••••••••••••••••••••••••••••••
@@ -2307,47 +2345,6 @@ function switchActiveClock() {
         player1Clock.start();
         console.log('No active clock found, starting Player 1 clock.');
     }
-}
-
-// Função para salvar o progresso do usuário no localStorage
-function salvarProgresso() {
-    if (!currentLessonName) return;
-
-    const progressoData = {
-        lessonName: currentLessonName,
-        fraseIndex: indiceFrase,
-        acertos1: acertos1,
-        acertos2: acertos2,
-        timestamp: new Date().getTime()
-    };
-
-    localStorage.setItem('listeningProProgresso', JSON.stringify(progressoData));
-}
-
-// Função para carregar o progresso salvo
-function carregarProgresso() {
-    const progressoSalvo = localStorage.getItem('listeningProProgresso');
-    if (!progressoSalvo) return null;
-
-    try {
-        return JSON.parse(progressoSalvo);
-    } catch (e) {
-        console.error("Erro ao carregar progresso:", e);
-        return null;
-    }
-}
-
-// Função para verificar se há progresso salvo para a lição atual
-function verificarProgressoLicao(lessonName) {
-    const progresso = carregarProgresso();
-    if (!progresso || progresso.lessonName !== lessonName) return false;
-
-    // Verificar se o progresso é recente (menos de 7 dias)
-    const agora = new Date().getTime();
-    const diferenca = agora - progresso.timestamp;
-    const diasDiferenca = diferenca / (1000 * 60 * 60 * 24);
-
-    return diasDiferenca < 7;
 }
 
 // *** Inicializar a aplicação *** //

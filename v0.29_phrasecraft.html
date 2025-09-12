@@ -1,4 +1,25 @@
 <!--
+Solução hybrid mais robusta: Use uma collection simples criada via código:// Crie a collection programaticamente uma vez
+const databases = new Appwrite.Databases(client);
+
+// Isso só precisa rodar uma vez para criar a structure
+async function setupDatabase() {
+    try {
+        await databases.createCollection(
+            'database_id', 
+            'progress_collection',
+            'User Progress'
+        );
+        
+        // Adicionar atributos
+        await databases.createStringAttribute('database_id', 'progress_collection', 'user_id', 255, true);
+        await databases.createStringAttribute('database_id', 'progress_collection', 'lesson_name', 255, true);
+        // ... outros atributos
+    } catch (error) {
+        console.log('Collection já existe ou erro:', error);
+    }
+}
+Lembre-se de que frases.length precisa estar disponível no escopo onde esta lógica é executada. Certifique-se de que o carregamento do SRT (que popula frases) ocorra antes ou que frases seja populado de alguma forma antes desta verificação, caso contrário, frases.length pode ser 0 ou indefinido. A estrutura atual do seu código parece carregar o SRT dentro de loadLesson, o que significa que frases.lengthda lastLessonIndex antes de exibir o confirm.Uma abordagem mais robusta seria carregar o SRT da última lição em segundo plano para obter o frases.length antes de exibir a confirmação, ou ajustar a mensagem para não incluir o total de frases se essa informação não estiver prontamente disponível. Para manter a simplicidade e seguir sua instrução de ajustar as funções existentes, a solução proposta assume que você ajustará a exibição se frases.length não for o esperado no momento da confirmação. No entanto, a forma mais segura seria carregar o SRT da lição para obter o frases.length antes de exibir a confirmação. Isso pode exigir uma refatoração maior do que um simples ajuste. Para o propósito de unificar as confirmações, o código acima atende ao seu pedido, mas a exibição de frases.length pode ser imprecisa se o SRT ainda não tiver sido carregado para aquela lição específica.
 Problemas e Soluções
 Variáveis não declaradas:
 A variável btnSignupHeader estava sendo referenciada, mas não havia um elemento HTML com o ID btnSignup no seu código. A correção foi ajustar a referência para id="btnLogin" que é o ID correto do botão "Cadastrar".

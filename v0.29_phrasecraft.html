@@ -809,7 +809,7 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
         <div id="menu-overlay">        
             <div class="menu-header" id="menu-header">
                 <button class="back-button">⬅️</button>
-                <button id="info">Ajuda</button>
+                <button id="info" class="">Ajuda</button>
                 <div class="user-buttons">
                     <button id="btnLogin">Entrar</button>
                     <button id="btnSignup">Cadastrar</button>
@@ -832,7 +832,7 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
                     <div class="continue-header"></div>
                     <div class="continue-lesson-name" id="continue-lesson-name">Lady Gaga - Scheiße</div>
                     <div class="continue-progress" id="continue-progress">Frase 15 de 45 • Última sessão: há 2 dias</div>
-                    <button class="continue-button" id="continue-button"> ⏩ Continuar</button>
+                    <button class="footer-btn" id="continue-button"> ⏩ Continuar</button>
                 </div>
             
                 <!-- Lista de lições será populada dinamicamente aqui -->
@@ -899,20 +899,6 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
                     </form>
                     <p>Lembrou da sua senha? <a href="#" id="link-to-login-from-recover">Entrar</a></p>
                     <p>Não tem uma conta? <a href="#" id="link-to-signup-from-recover">Cadastre-se</a></p>
-                </div>
-            </section>
-            
-            <section id="user-screen" class="login-screen-container hidden">
-                <div class="login-card user-card">
-                    <h2 id="welcome-message"></h2>            
-                    <h1>Editor de Texto</h1>
-                    <div>
-                        <textarea id="editor" placeholder="Digite seu texto aqui..."></textarea>
-                    </div>
-                    <div id="controls" class="hidden">
-                        <button id="btn-continue">Continuar Edição</button>
-                        <button id="btn-restart">Recomeçar</button>
-                    </div>
                 </div>
             </section>
             <!-- Bloco Auth -| End -->
@@ -1202,6 +1188,21 @@ Adicionei a variável playerReady para lidar com a assincronia do carregamento d
     });
 // ••••••••••••••••••••••••••••••••
 // Fim do Bloco de Atutenticacao
+// ••••••••••••••••••••••••••••••••
+
+// ••••••••••••••••••••••••••••••••
+// Bloco do Banco de Dados | Inico
+// ••••••••••••••••••••••••••••••••
+    const databases = new Appwrite.Databases(client);
+
+    // Define as constantes do seu projeto
+    const DATABASE_ID = '68bfc30500251b74b4fc';
+    const COLLECTION_ID = '68bfc325002b09dd5ea5';
+    
+    
+    
+// ••••••••••••••••••••••••••••••••
+// Bloco do Banco de Dados | Fim
 // ••••••••••••••••••••••••••••••••
 
 //=============================
